@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Регистър на нечовешките идентичности (NHI) — NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .toolbar2{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .toolbar2 .spacer{ flex:1; }
+  .stat{ display:inline-flex; align-items:baseline; gap:6px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 13px; font-size:13px; color:var(--ink-soft); }
+  .stat b{ font-size:18px; font-family:var(--serif); color:var(--blue-strong); }
+  .stat.crit b{ color:var(--no);} .stat.warn b{ color:var(--partial);} .stat.ai b{ color:#0a8a8a;}
+  table.reg{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.reg th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#fff; background:var(--blue-strong); padding:9px 8px; position:sticky; top:0; z-index:2; }
+  table.reg td{ padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.reg tr:hover td{ background:#fafcff; }
+  table.reg input[type=text], table.reg select, table.reg input[type=date]{ width:100%; border:1px solid var(--line); border-radius:7px; padding:6px 7px; font-family:inherit; font-size:12.5px; color:var(--ink); background:#fff; }
+  .type-ai{ color:#0a8a8a; font-weight:700; }
+  .priv{ text-align:center; } .priv input{ accent-color:var(--no); width:15px; height:15px; }
+  .overdue{ color:var(--no); font-weight:700; font-size:10.5px; } .ok-rev{ color:var(--yes); font-size:10.5px; }
+  .st-orphan{ color:var(--no); font-weight:700; }
+  .del{ border:0; background:none; color:var(--no); cursor:pointer; font-size:15px; padding:4px; }
+  .addrow{ display:grid; grid-template-columns:1.4fr 1.1fr 1.2fr 1fr auto; gap:10px; align-items:end; }
+  @media (max-width:760px){ .addrow{ grid-template-columns:1fr 1fr; } }
+  .fld label{ display:block; font-size:12px; font-weight:600; color:var(--blue-strong); margin-bottom:4px; }
+  .fld input, .fld select{ width:100%; border:1px solid var(--blue-line); border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13.5px; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap wide">
+      <div class="eyebrow">Инструмент · контрол на достъпа · чл. 21, ал. 2, букви „и“ и „й“</div>
+      <h1>Регистър на нечовешките идентичности (NHI)</h1>
+      <p>Service акаунти, API ключове, OAuth токени, RPA ботове и AI агенти растат лавинообразно и често остават без собственик и контрол. Този регистър им дава видимост, собственици, обхват на правата и ротация — основа за управление на достъпа по NIS 2.</p>
+      <span class="ref">Допълва Политиката за контрол на достъпа · данните се пазят в браузъра · CSV/печат</span>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="callout noprint">Свързани ресурси:
+      <a href="document.html?doc=access-control"><b>Политика за контрол на достъпа</b></a> ·
+      <a href="document.html?doc=ai-use-policy">Политика за ползване на AI</a> ·
+      <a href="ai-inventory.html">AI-BOM</a> ·
+      <a href="nis2-ai.html">NIS 2 и изкуственият интелект</a>.</div>
+
+    <div class="toolbar2 noprint">
+      <span class="stat">Идентичности <b id="cTotal">0</b></span>
+      <span class="stat ai">AI агенти <b id="cAgents">0</b></span>
+      <span class="stat warn">Привилегировани <b id="cPriv">0</b></span>
+      <span class="stat crit">Осиротели <b id="cOrphan">0</b></span>
+      <span class="stat crit">Просрочена ротация <b id="cOverdue">0</b></span>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="btnReset">↺ Примерни данни</button>
+      <button class="btn ghost" id="btnCSV">⬇ CSV</button>
+      <button class="btn primary" id="btnPrint">🖨 Отпечатай</button>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">＋</span> Добавяне на идентичност</h2>
+      <div class="addrow">
+        <div class="fld"><label>Име на идентичността</label><input type="text" id="nName" placeholder="напр. svc-backup"></div>
+        <div class="fld"><label>Тип</label><select id="nType"></select></div>
+        <div class="fld"><label>Система / услуга</label><input type="text" id="nSystem" placeholder="напр. Архивиране"></div>
+        <div class="fld"><label>Собственик</label><input type="text" id="nOwner" placeholder="екип/лице"></div>
+        <div class="fld"><button class="btn primary" id="btnAdd">Добави</button></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">☰</span> Регистър на NHI</h2>
+      <div style="overflow-x:auto">
+      <table class="reg">
+        <thead><tr>
+          <th style="min-width:150px">Идентичност</th>
+          <th>Тип</th><th>Система</th><th>Собственик</th>
+          <th style="min-width:150px">Права / обхват</th>
+          <th>Привил.</th><th>Ротация</th><th>Статус</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      </div>
+      <p style="font-size:12px;color:var(--ink-soft);margin-top:10px">Осиротяла = без собственик или маркирана „Осиротял“. Просрочена ротация = тайната не е сменяна над 180 дни или липсва дата. AI агентите изискват най-малки права, журналиране и одобрение от човек за чувствителни действия.</p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Регистър на нечовешките идентичности (NHI) · NIS 2 контрол на достъпа · самооценка</footer>
+
+<script>
+const TYPE=["Service account","API ключ","OAuth токен","SSH ключ","RPA бот","AI агент","Workload identity"];
+const STATUS=["Активен","В преглед","Осиротял","Прекратен"];
+
+const SAMPLE=[
+  {name:"svc-backup",type:"Service account",system:"Система за архивиране",owner:"ИТ операции",scope:"Четене/запис на хранилища",priv:true,rot:"2026-04-10",status:"Активен"},
+  {name:"api-payments",type:"API ключ",system:"Платежен шлюз",owner:"Финанси",scope:"Иницииране на плащания",priv:true,rot:"2026-03-01",status:"Активен"},
+  {name:"ci-deploy-token",type:"OAuth токен",system:"CI/CD пайплайн",owner:"Разработка",scope:"Деплой в продукция",priv:true,rot:"2025-12-15",status:"Активен"},
+  {name:"rpa-invoices",type:"RPA бот",system:"Обработка на фактури",owner:"Финанси",scope:"Чете имейли, въвежда в ERP",priv:false,rot:"2026-02-20",status:"Активен"},
+  {name:"agent-support",type:"AI агент",system:"Поддръжка на клиенти",owner:"Поддръжка",scope:"Чете/праща тикети, API достъп",priv:false,rot:"",status:"В преглед"},
+  {name:"agent-sales-copilot",type:"AI агент",system:"CRM",owner:"Продажби",scope:"Чете CRM, генерира оферти, праща имейли",priv:true,rot:"",status:"В преглед"},
+  {name:"legacy-svc-01",type:"Service account",system:"Стара система",owner:"",scope:"Неизвестен обхват",priv:true,rot:"2024-08-01",status:"Осиротял"},
+  {name:"workload-analytics",type:"Workload identity",system:"Аналитична платформа (cloud)",owner:"Данни",scope:"Чете данни от хранилище",priv:false,rot:"2026-05-05",status:"Активен"},
+];
+
+const KEY="nis2nhi_v1";
+function seed(){ return SAMPLE.map((s,i)=>Object.assign({id:"n"+i}, s)); }
+let items=load();
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); return s&&s.length?s:seed(); }catch(e){ return seed(); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(items)); }catch(e){} }
+
+const nType=document.getElementById("nType"); TYPE.forEach(t=>nType.add(new Option(t,t))); nType.value="Service account";
+
+function daysSince(d){ if(!d) return Infinity; const t=new Date(d); if(isNaN(t)) return Infinity; return (Date.now()-t.getTime())/86400000; }
+function overdue(s){ return daysSince(s.rot) > 180; }
+function orphan(s){ return s.status==="Осиротял" || !(s.owner||"").trim(); }
+
+function renderStats(){
+  document.getElementById("cTotal").textContent=items.length;
+  document.getElementById("cAgents").textContent=items.filter(s=>s.type==="AI агент").length;
+  document.getElementById("cPriv").textContent=items.filter(s=>s.priv).length;
+  document.getElementById("cOrphan").textContent=items.filter(orphan).length;
+  document.getElementById("cOverdue").textContent=items.filter(overdue).length;
+}
+function opt(list,v){ return list.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join(""); }
+
+function render(){
+  const tb=document.getElementById("rows");
+  tb.innerHTML=items.map((s,idx)=>`
+    <tr data-idx="${idx}">
+      <td><input type="text" data-f="name" value="${(s.name||'').replace(/"/g,'&quot;')}"></td>
+      <td><select data-f="type" class="${s.type==='AI агент'?'type-ai':''}">${opt(TYPE,s.type)}</select></td>
+      <td><input type="text" data-f="system" value="${(s.system||'').replace(/"/g,'&quot;')}"></td>
+      <td><input type="text" data-f="owner" value="${(s.owner||'').replace(/"/g,'&quot;')}" placeholder="— осиротял —"></td>
+      <td><input type="text" data-f="scope" value="${(s.scope||'').replace(/"/g,'&quot;')}"></td>
+      <td class="priv"><input type="checkbox" data-f="priv" ${s.priv?'checked':''}></td>
+      <td><input type="date" data-f="rot" value="${s.rot||''}">
+          <div class="${overdue(s)?'overdue':'ok-rev'}">${overdue(s)?'⚠ просрочена':'актуална'}</div></td>
+      <td><select data-f="status" class="${orphan(s)?'st-orphan':''}">${opt(STATUS,s.status)}</select></td>
+      <td><button class="del" title="Изтрий">✕</button></td>
+    </tr>`).join("");
+  if(!items.length) tb.innerHTML=`<tr><td colspan="9" style="text-align:center;color:var(--ink-soft);padding:20px">Няма идентичности. Добавете или заредете примерните данни.</td></tr>`;
+  tb.querySelectorAll("tr[data-idx]").forEach(tr=>{
+    const idx=+tr.dataset.idx;
+    tr.querySelectorAll("[data-f]").forEach(inp=>{
+      const f=inp.dataset.f;
+      if(inp.type==="checkbox"){ inp.onchange=()=>{ items[idx][f]=inp.checked; save(); renderStats(); }; }
+      else if(inp.tagName==="SELECT"){ inp.onchange=()=>{ items[idx][f]=inp.value; save(); render(); renderStats(); }; }
+      else { inp.oninput=()=>{ items[idx][f]=inp.value; save(); if(f==="rot"||f==="owner"){ render(); } renderStats(); }; }
+    });
+    tr.querySelector(".del").onclick=()=>{ if(confirm("Изтриване на идентичността?")){ items.splice(idx,1); save(); renderAll(); } };
+  });
+}
+function renderAll(){ renderStats(); render(); }
+
+document.getElementById("btnAdd").onclick=()=>{
+  const name=document.getElementById("nName").value.trim(); if(!name){ alert("Въведете име на идентичността."); return; }
+  items.unshift({id:"c"+Date.now(), name, type:nType.value, system:document.getElementById("nSystem").value.trim(), owner:document.getElementById("nOwner").value.trim(), scope:"", priv:false, rot:"", status:"В преглед"});
+  document.getElementById("nName").value=""; document.getElementById("nSystem").value=""; document.getElementById("nOwner").value="";
+  save(); renderAll();
+};
+document.getElementById("btnReset").onclick=()=>{ if(confirm("Зареждане на примерните данни? Това ще замени текущия регистър.")){ items=seed(); save(); renderAll(); } };
+document.getElementById("btnPrint").onclick=()=>window.print();
+document.getElementById("btnCSV").onclick=()=>{
+  const head=["Идентичност","Тип","Система","Собственик","Права/обхват","Привилегирован","Последна ротация","Просрочена","Статус"];
+  const yn=b=>b?"Да":"Не";
+  const rows=items.map(s=>[s.name,s.type,s.system,s.owner,s.scope,yn(s.priv),s.rot||"",overdue(s)?"Да":"Не",s.status]);
+  const csv=[head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n");
+  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="registar-nhi.csv"; a.click();
+};
+renderAll();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

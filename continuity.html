@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Непрекъсваемост на дейността — ръководство по NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Ръководство · чл. 21, ал. 2, буква „в“</div>
+      <h1>Непрекъсваемост на дейността</h1>
+      <p>Как да изградите управление на непрекъсваемостта, резервните копия, възстановяването след бедствие и кризите така, че критичните услуги да се възстановяват в приемливи срокове — в съответствие с NIS 2.</p>
+      <span class="ref">Обхваща BIA · RTO/RPO · резервни копия · DRP · BCP · кризисно управление · учения</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Какво изисква NIS 2</h2>
+      <div class="callout law"><b>Чл. 21, ал. 2, буква „в“:</b> мерки за „непрекъсваемост на дейността, като например управление на резервните копия и възстановяване след бедствие, и управление при кризи“. Целта е критичните функции да бъдат възстановени след разрушителни събития в подходящи срокове.</div>
+      <p>На практика регулаторът очаква документирана система за управление на непрекъсваемостта (BCMS), вдъхновена от <b>ISO 22301</b>, с доказателства, че плановете действат — тествани са и се поддържат.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Стъпки за прилагане</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div>
+          <h3>Анализ на въздействието върху дейността (BIA)</h3>
+          <p>Идентифицирайте критичните процеси и ресурси и определете колко бързо трябва да се възстановят.</p>
+          <ul>
+            <li><b>RTO</b> (целево време за възстановяване) — за колко време трябва да възстановите услугата;</li>
+            <li><b>RPO</b> (целева точка за възстановяване) — колко данни можете да си позволите да загубите;</li>
+            <li>картографирайте зависимостите (системи, доставчици, персонал).</li>
+          </ul>
+        </div></div>
+        <div class="step"><div class="sn">2</div><div>
+          <h3>Стратегия за резервни копия</h3>
+          <p>Документирана политика с честота, срок на съхранение, RTO/RPO и редовни тестове за възстановяване.</p>
+          <ul>
+            <li>Правило <b>3-2-1-1-0</b>: 3 копия, 2 носителя, 1 извън обекта, 1 неизменимо/air-gap, 0 грешки при тест;</li>
+            <li>криптиране на копията (<b>AES-256</b> или еквивалент);</li>
+            <li>защита срещу рансъмуер — неизменими (immutable) копия.</li>
+          </ul>
+        </div></div>
+        <div class="step"><div class="sn">3</div><div>
+          <h3>План за възстановяване след бедствие (DRP)</h3>
+          <p>Подробни процедури (runbooks) за възстановяване на ИТ системите — кой, какво, в какъв ред.</p>
+        </div></div>
+        <div class="step"><div class="sn">4</div><div>
+          <h3>План за непрекъсваемост на дейността (BCP)</h3>
+          <p>Алтернативни начини за изпълнение на критичните бизнес процеси, роли и отговорности, резервни локации и комуникация.</p>
+        </div></div>
+        <div class="step"><div class="sn">5</div><div>
+          <h3>Управление при кризи</h3>
+          <p>Сформирайте кризисен екип с ясни роли, дърво за ескалация и шаблони за вътрешна и външна комуникация (вкл. връзка с докладването на инциденти по чл. 23).</p>
+        </div></div>
+        <div class="step"><div class="sn">6</div><div>
+          <h3>Тестване и учения</h3>
+          <p>Периодични тестове за възстановяване и симулации (table-top, пълни учения). Измервайте реалното време за възстановяване и документирайте резултатите.</p>
+        </div></div>
+        <div class="step"><div class="sn">7</div><div>
+          <h3>Поддръжка и преглед</h3>
+          <p>Актуализирайте плановете при промени в средата и след всеки инцидент или учение (цикъл на непрекъснато подобрение).</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">✓</span> Контролен списък</h2>
+        <ul class="checklist">
+          <li>Извършен и документиран BIA с RTO/RPO</li>
+          <li>Политика за резервни копия (3-2-1-1-0, криптиране)</li>
+          <li>Неизменими/air-gap копия срещу рансъмуер</li>
+          <li>DRP с runbooks за критичните системи</li>
+          <li>BCP с алтернативни процеси и роли</li>
+          <li>Кризисен екип и план за комуникация</li>
+          <li>Поне едно учение/тест годишно с протокол</li>
+          <li>Преглед след промени и инциденти</li>
+        </ul>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🗎</span> Доказателства за одит</h2>
+        <p class="lead">Какво да можете да покажете при проверка:</p>
+        <ul>
+          <li>Документ BIA и регистър на критичните процеси;</li>
+          <li>Политика и графици за резервни копия;</li>
+          <li>Протоколи от тестове за възстановяване (с измерено време);</li>
+          <li>BCP/DRP документи с дати на преглед;</li>
+          <li>Записи от учения и извлечени поуки.</li>
+        </ul>
+        <p><span class="pill">Свързан инструмент</span> <a href="risk-matrix.html">Анализ на риска</a> · <a href="incident-report.html">Управление на инциденти</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Източници</h2>
+      <p class="sources">Подготвено на база изискванията на NIS 2 и добри практики:
+        <a href="https://www.drifrance.eu/en/2025/04/21/nis2-requirements-for-operational-continuity-and-resilience/" target="_blank" rel="noopener">DRI — NIS2 operational continuity</a> ·
+        <a href="https://www.iso.org/standard/75106.html" target="_blank" rel="noopener">ISO 22301:2019</a> ·
+        <a href="https://nimbus.rdem-systems.com/en/blog/nis2-backup-compliance/" target="_blank" rel="noopener">NIS2 backup compliance</a> ·
+        <a href="https://www.cagripolat.com/nis2/en/nis2-directive-business-continuity-disaster-recovery-planning" target="_blank" rel="noopener">NIS2 BC & DR planning</a>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Ръководство · Непрекъсваемост на дейността (NIS 2, чл. 21) · Информативно, без правнообвързваща сила</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Анализ на риска — матрица на риска (NIS 2)</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .toolbar2{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .toolbar2 .spacer{ flex:1; }
+  .stat{ display:inline-flex; align-items:baseline; gap:6px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 13px; font-size:13px; color:var(--ink-soft); }
+  .stat b{ font-size:18px; font-family:var(--serif); color:var(--blue-strong); }
+  .stat.crit b{ color:var(--no);} .stat.high b{ color:#d9730b;} .stat.med b{ color:var(--partial);} .stat.low b{ color:var(--yes);}
+
+  /* heatmap */
+  .heat-wrap{ display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .heatbox{ display:flex; gap:8px; }
+  .yaxis{ display:flex; align-items:center; }
+  .yaxis span{ writing-mode:vertical-rl; transform:rotate(180deg); font-size:11.5px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; }
+  .heatcol{ display:flex; flex-direction:column; }
+  .heat{ display:grid; grid-template-columns:26px repeat(5,58px); gap:4px; }
+  .heat .cap{ font-size:11.5px; color:var(--ink-soft); display:flex; align-items:center; justify-content:center; font-weight:600; }
+  .xaxis{ text-align:center; font-size:11.5px; font-weight:700; color:var(--ink-soft); margin-top:6px; padding-left:30px; letter-spacing:.04em; }
+  .cell{ height:58px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; cursor:pointer; color:#3a2a00; border:2px solid transparent; }
+  .cell:hover{ outline:2px solid var(--blue-strong); }
+  .cell.sel{ border-color:var(--blue-strong); }
+  .cell.empty{ color:rgba(0,0,0,.25); }
+  .lvl-low{ background:#cdeBd8;} .lvl-low{ background:#c9ecd5;} .lvl-med{ background:#fdeaa8;} .lvl-high{ background:#f9c98c;} .lvl-crit{ background:#f3a39a;}
+  .heat .corner{}
+  .legend{ font-size:12.5px; color:var(--ink-soft); display:flex; flex-direction:column; gap:6px; }
+  .legend .li{ display:flex; align-items:center; gap:8px; } .legend .sw{ width:16px; height:16px; border-radius:4px; }
+
+  table.reg{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.reg th{ text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); padding:8px 8px; border-bottom:2px solid var(--line); position:sticky; top:0; background:#fff; }
+  table.reg td{ padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.reg tr:hover td{ background:#fafcff; }
+  table.reg input[type=text], table.reg select{ width:100%; border:1px solid var(--line); border-radius:7px; padding:6px 8px; font-family:inherit; font-size:13px; color:var(--ink); background:#fff; }
+  table.reg .li-sel{ width:54px; }
+  .sev{ display:inline-block; min-width:30px; text-align:center; font-weight:700; border-radius:6px; padding:3px 6px; font-size:12.5px; }
+  .sev.low{ background:var(--yes-soft); color:var(--yes);} .sev.med{ background:var(--partial-soft); color:var(--partial);} .sev.high{ background:#fdecd9; color:#c2691a;} .sev.crit{ background:var(--no-soft); color:var(--no);}
+  .del{ border:0; background:none; color:var(--no); cursor:pointer; font-size:16px; padding:4px; }
+  .catbadge{ font-size:11px; color:var(--blue); background:var(--blue-soft); padding:2px 7px; border-radius:999px; white-space:nowrap; }
+  .addrow{ display:grid; grid-template-columns:1.6fr 1.2fr 70px 70px auto; gap:10px; align-items:end; }
+  @media (max-width:760px){ .addrow{ grid-template-columns:1fr 1fr; } table.reg .hide-sm{ display:none; } }
+  .fld label{ display:block; font-size:12px; font-weight:600; color:var(--blue-strong); margin-bottom:4px; }
+  .fld input, .fld select{ width:100%; border:1px solid var(--blue-line); border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13.5px; }
+  .filterbar{ font-size:13px; color:var(--ink-soft); margin-bottom:10px; display:none; }
+  .filterbar.on{ display:block; } .filterbar a{ color:var(--blue); cursor:pointer; font-weight:600; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Инструмент · чл. 21, ал. 2, буква „а“</div>
+      <h1>Анализ на риска и политики</h1>
+      <p>Регистър и матрица на киберриска. Заредена е библиотека с типични рискове и предложени стойности — редактирайте вероятността и въздействието, добавяйте свои рискове и проследявайте третирането им.</p>
+      <span class="ref">Резултатите се пазят в браузъра ви · можете да отпечатате или свалите регистъра</span>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="toolbar2 noprint">
+      <span class="stat">Общо рискове <b id="cTotal">0</b></span>
+      <span class="stat crit">Критични <b id="cCrit">0</b></span>
+      <span class="stat high">Високи <b id="cHigh">0</b></span>
+      <span class="stat med">Средни <b id="cMed">0</b></span>
+      <span class="stat low">Ниски <b id="cLow">0</b></span>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="btnReset">↺ Възстанови библиотеката</button>
+      <button class="btn ghost" id="btnCSV">⬇ CSV</button>
+      <button class="btn primary" id="btnPrint">🖨 Отпечатай</button>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">▦</span> Матрица на риска</h2>
+      <p class="lead">Брой рискове по вероятност (хоризонтално) и въздействие (вертикално). Натиснете клетка, за да филтрирате таблицата.</p>
+      <div class="heat-wrap">
+        <div>
+          <div class="heatbox">
+            <div class="yaxis"><span>Въздействие →</span></div>
+            <div class="heatcol">
+              <div class="heat" id="heat"></div>
+              <div class="xaxis">Вероятност →</div>
+            </div>
+          </div>
+        </div>
+        <div class="legend">
+          <div style="font-weight:700;color:var(--blue-strong)">Ниво на риск (В×Н)</div>
+          <div class="li"><span class="sw" style="background:#c9ecd5"></span> Нисък (1–4)</div>
+          <div class="li"><span class="sw" style="background:#fdeaa8"></span> Среден (5–9)</div>
+          <div class="li"><span class="sw" style="background:#f9c98c"></span> Висок (10–14)</div>
+          <div class="li"><span class="sw" style="background:#f3a39a"></span> Критичен (15–25)</div>
+          <div style="margin-top:8px;font-size:12px">В = вероятност, Н = въздействие (1–5)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">＋</span> Добавяне на риск</h2>
+      <div class="addrow">
+        <div class="fld"><label>Наименование на риска</label><input type="text" id="nName" placeholder="напр. Неоторизиран достъп до..."></div>
+        <div class="fld"><label>Категория</label><select id="nCat"></select></div>
+        <div class="fld"><label>Вероятност</label><select id="nL"></select></div>
+        <div class="fld"><label>Въздействие</label><select id="nI"></select></div>
+        <div class="fld"><button class="btn primary" id="btnAdd">Добави</button></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">☰</span> Регистър на риска</h2>
+      <div class="filterbar" id="filterbar"></div>
+      <div style="overflow-x:auto">
+      <table class="reg">
+        <thead><tr>
+          <th style="min-width:230px">Риск</th>
+          <th class="hide-sm">Категория</th>
+          <th>В</th><th>Н</th><th>Ниво</th>
+          <th class="hide-sm" style="min-width:150px">Третиране / мярка</th>
+          <th class="hide-sm">Отговорник</th>
+          <th>Статус</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Инструмент за анализ на риска · Закон за киберсигурност (NIS 2, чл. 21) · Самооценка без правнообвързваща сила</footer>
+
+<script>
+const CATS = ["Достъп и удостоверяване","Зловреден софтуер","Социално инженерство","Верига на доставки",
+  "Наличност и непрекъсваемост","Данни и криптография","Облак и инфраструктура","Управление и процеси",
+  "Физическа сигурност","Съответствие","Човешки фактор","Изкуствен интелект (AI)"];
+
+// Библиотека с типични рискове (вероятност L, въздействие I — 1..5)
+const LIBRARY = [
+  ["Фишинг и компрометиране на идентификационни данни","Социално инженерство",4,4,"MFA, обучение, филтриране на имейли"],
+  ["Ransomware (рансъмуер) атака","Зловреден софтуер",4,5,"Имутабилни резервни копия, EDR, сегментация"],
+  ["Изтичане на лични/чувствителни данни","Данни и криптография",3,5,"Криптиране, DLP, контрол на достъпа"],
+  ["Компрометиран доставчик / верига на доставки","Верига на доставки",3,4,"Оценка на доставчици, договорни клаузи"],
+  ["Липса на многофакторно удостоверяване","Достъп и удостоверяване",4,4,"Въвеждане на MFA за всички акаунти"],
+  ["Прекомерни права на достъп","Достъп и удостоверяване",3,3,"Принцип на най-малки права, прегледи"],
+  ["Неприложени актуализации / кръпки","Облак и инфраструктура",4,4,"Управление на кръпки, сканиране"],
+  ["DDoS атака срещу услугите","Наличност и непрекъсваемост",3,4,"Anti-DDoS, CDN, капацитет"],
+  ["Загуба на наличност на критична система","Наличност и непрекъсваемост",3,5,"Резервиране, HA, DRP"],
+  ["Липса или неуспех на резервни копия","Наличност и непрекъсваемост",2,5,"3-2-1-1-0, тестове за възстановяване"],
+  ["Вътрешна заплаха (insider)","Човешки фактор",2,4,"Логване, разделяне на задължения"],
+  ["Грешна конфигурация на облака","Облак и инфраструктура",3,4,"CSPM, базови конфигурации (hardening)"],
+  ["Незащитени крайни точки (endpoints)","Облак и инфраструктура",3,3,"EDR, криптиране на дискове"],
+  ["Кражба или загуба на мобилно устройство","Физическа сигурност",3,2,"MDM, криптиране, дистанционно изтриване"],
+  ["Слаби или преизползвани пароли","Достъп и удостоверяване",4,3,"Парол. политика, мениджър на пароли, MFA"],
+  ["Зловреден софтуер чрез имейл/уеб","Зловреден софтуер",4,4,"Филтриране, пясъчник, антивирус/EDR"],
+  ["Експлоатация на уязвимост в публично приложение","Облак и инфраструктура",3,5,"WAF, пентест, управление на уязвимости"],
+  ["Липса на криптиране на данни в покой","Данни и криптография",3,4,"AES-256 за бази, дискове, копия"],
+  ["Липса на криптиране при пренос","Данни и криптография",2,4,"TLS 1.2+, забрана на стари протоколи"],
+  ["Неоторизиран физически достъп до сървъри","Физическа сигурност",2,4,"Контрол на достъпа, видеонаблюдение"],
+  ["Социално инженерство по телефон (vishing)","Социално инженерство",3,3,"Процедури за верификация, обучение"],
+  ["Изтекли API ключове / тайни в кода","Данни и криптография",3,4,"Secret scanning, vault, ротация"],
+  ["Shadow IT (несанкционирани системи)","Управление и процеси",3,3,"Инвентар на активи, политики"],
+  ["Зависимост от единствен доставчик","Верига на доставки",2,3,"Изходна стратегия, алтернативи"],
+  ["Прекъсване на електрозахранване / ЦОД","Наличност и непрекъсваемост",2,4,"UPS, генератор, резервен ЦОД"],
+  ["Природно бедствие / пожар в обекта","Физическа сигурност",1,5,"Географско резервиране, DRP"],
+  ["Неадекватно логване и мониторинг","Управление и процеси",3,4,"SIEM, централизирани логове, аларми"],
+  ["Липса на план за реакция при инциденти","Управление и процеси",3,4,"IR план, роли, учения"],
+  ["Неспазване на сроковете за докладване (24/72ч)","Съответствие",3,4,"Процес и образци за уведомяване"],
+  ["Човешка грешка на служител","Човешки фактор",4,3,"Обучение, автоматизация, 4 очи"],
+  ["Компрометиране на привилегирован акаунт","Достъп и удостоверяване",2,5,"PAM, MFA, отделни админ акаунти"],
+  ["Несигурна разработка на софтуер","Управление и процеси",3,4,"Secure SDLC, преглед на код"],
+  ["Липса на сегментация на мрежата","Облак и инфраструктура",3,4,"Сегментация, zero trust"],
+  ["Изтичане на данни през трета страна","Верига на доставки",3,4,"Договори, одити, минимизиране на данни"],
+  ["Остарели / неподдържани системи (EOL)","Облак и инфраструктура",3,4,"Жизнен цикъл, миграция, изолация"],
+  ["Липса на обучение на персонала","Човешки фактор",4,3,"Програма за киберхигиена"],
+  ["Прекъсване на интернет свързаност","Наличност и непрекъсваемост",2,3,"Резервна свързаност, SLA"],
+  ["Неспазване на изискванията за управленски надзор","Съответствие",2,4,"Одобрение и докладване към ръководството"],
+  ["Prompt injection (LLM01)","Изкуствен интелект (AI)",4,4,"Разделяне на инструкции/данни, валидиране на вход, ограничени права"],
+  ["Изтичане на чувствителна информация през LLM (LLM02)","Изкуствен интелект (AI)",3,5,"Минимизиране на данните, филтриране на изхода, забрана за чувствителни данни"],
+  ["Уязвимости във веригата на доставки на AI (LLM03)","Изкуствен интелект (AI)",3,4,"Проверка на модели и зависимости, AI-BOM"],
+  ["Отравяне на данни и модели (LLM04)","Изкуствен интелект (AI)",2,5,"Контрол на източниците на данни, валидиране, мониторинг"],
+  ["Неправилно боравене с изхода на модела (LLM05)","Изкуствен интелект (AI)",3,4,"Третиране на изхода като недоверен, екраниране, валидиране"],
+  ["Прекомерна автономност на AI агенти (LLM06)","Изкуствен интелект (AI)",3,5,"Най-малки права, human-in-the-loop, ограничени инструменти"],
+  ["Изтичане на системния промпт (LLM07)","Изкуствен интелект (AI)",3,3,"Без тайни в системния промпт, разделяне на контекста"],
+  ["Слабости във вектори и ембединги (LLM08)","Изкуствен интелект (AI)",2,4,"Контрол на достъпа до векторни бази, валидиране на входа"],
+  ["Дезинформация и халюцинации (LLM09)","Изкуствен интелект (AI)",4,3,"Проверка от човек, цитиране на източници, ограничен обхват"],
+  ["Неограничено потребление на ресурси (LLM10)","Изкуствен интелект (AI)",3,3,"Лимити, квоти и мониторинг на разходите"],
+  ["Shadow AI (несанкционирани AI инструменти)","Изкуствен интелект (AI)",4,4,"Политика за AI, одобрени инструменти, DLP, инвентар (AI-BOM)"],
+  ["Разрастване на нечовешки идентичности (NHI)","Изкуствен интелект (AI)",3,4,"Регистър на NHI, собственици, ротация на тайните, най-малки права"],
+  ["Deepfake социално инженерство","Изкуствен интелект (AI)",3,4,"Верификация по втори канал, обучение, процедури за плащания"],
+];
+
+function level(s){ if(s<=4) return "low"; if(s<=9) return "med"; if(s<=14) return "high"; return "crit"; }
+function levelName(s){ return {low:"Нисък",med:"Среден",high:"Висок",crit:"Критичен"}[level(s)]; }
+
+const KEY="nis2risks_v1";
+function seed(){ return LIBRARY.map((r,idx)=>({ id:"r"+idx+"_"+r[0].length, name:r[0], cat:r[1], l:r[2], i:r[3], treat:r[4], owner:"", status:"open" })); }
+let risks = load();
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); return s&&s.length?s:seed(); }catch(e){ return seed(); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(risks)); }catch(e){} }
+
+let filter=null; // {l,i}
+
+// populate selects
+const nCat=document.getElementById("nCat"); CATS.forEach(c=>nCat.add(new Option(c,c)));
+const nL=document.getElementById("nL"), nI=document.getElementById("nI");
+for(let v=1;v<=5;v++){ nL.add(new Option(v,v)); nI.add(new Option(v,v)); } nL.value=3; nI.value=3;
+
+function counts(){ let c={crit:0,high:0,med:0,low:0}; risks.forEach(r=>c[level(r.l*r.i)]++); return c; }
+function renderStats(){ const c=counts();
+  cTotal.textContent=risks.length; cCrit.textContent=c.crit; cHigh.textContent=c.high; cMed.textContent=c.med; cLow.textContent=c.low; }
+
+function renderHeat(){
+  const el=document.getElementById("heat");
+  const grid={}; risks.forEach(r=>{ const k=r.l+"-"+r.i; grid[k]=(grid[k]||0)+1; });
+  let html = "";
+  for(let i=5;i>=1;i--){
+    html += `<div class="cap">${i}</div>`;                 // impact (row) number
+    for(let l=1;l<=5;l++){
+      const s=l*i; const k=l+"-"+i; const n=grid[k]||0;
+      const sel = filter&&filter.l===l&&filter.i===i ? "sel":"";
+      html += `<div class="cell lvl-${level(s)} ${n?'':'empty'} ${sel}" data-l="${l}" data-i="${i}" title="Вероятност ${l} × Въздействие ${i} = ${s} · ${levelName(s)}">${n||'·'}</div>`;
+    }
+  }
+  html += `<div class="cap"></div>`;                        // bottom-left corner
+  for(let l=1;l<=5;l++) html += `<div class="cap">${l}</div>`; // likelihood (col) numbers
+  el.innerHTML = html;
+  el.querySelectorAll(".cell").forEach(c=>{
+    c.onclick=()=>{ const l=+c.dataset.l, i=+c.dataset.i;
+      filter = (filter&&filter.l===l&&filter.i===i)? null : {l,i}; renderHeat(); renderRows(); };
+  });
+}
+
+function renderRows(){
+  const tb=document.getElementById("rows");
+  const fb=document.getElementById("filterbar");
+  let list = risks.map((r,idx)=>({r,idx}));
+  if(filter){ list=list.filter(x=>x.r.l===filter.l && x.r.i===filter.i);
+    fb.className="filterbar on"; fb.innerHTML=`Филтър: вероятност ${filter.l} × въздействие ${filter.i} (${list.length}). <a id="clearF">Изчисти филтъра</a>`;
+  } else { fb.className="filterbar"; fb.innerHTML=""; }
+  tb.innerHTML = list.map(({r,idx})=>{
+    const s=r.l*r.i; const lv=level(s);
+    return `<tr data-idx="${idx}">
+      <td><input type="text" data-f="name" value="${(r.name||'').replace(/"/g,'&quot;')}"></td>
+      <td class="hide-sm"><span class="catbadge">${r.cat||''}</span></td>
+      <td><select class="li-sel" data-f="l">${opt(r.l)}</select></td>
+      <td><select class="li-sel" data-f="i">${opt(r.i)}</select></td>
+      <td><span class="sev ${lv}">${s}</span><div style="font-size:10.5px;color:var(--ink-soft)">${levelName(s)}</div></td>
+      <td class="hide-sm"><input type="text" data-f="treat" value="${(r.treat||'').replace(/"/g,'&quot;')}"></td>
+      <td class="hide-sm"><input type="text" data-f="owner" value="${(r.owner||'').replace(/"/g,'&quot;')}" placeholder="—"></td>
+      <td><select data-f="status">
+        <option value="open" ${r.status==='open'?'selected':''}>Отворен</option>
+        <option value="treating" ${r.status==='treating'?'selected':''}>В процес</option>
+        <option value="mitigated" ${r.status==='mitigated'?'selected':''}>Овладян</option>
+        <option value="accepted" ${r.status==='accepted'?'selected':''}>Приет</option>
+      </select></td>
+      <td><button class="del" title="Изтрий">✕</button></td>
+    </tr>`;
+  }).join("");
+  if(!list.length) tb.innerHTML=`<tr><td colspan="9" style="text-align:center;color:var(--ink-soft);padding:20px">Няма рискове за показване.</td></tr>`;
+  // bind
+  tb.querySelectorAll("tr[data-idx]").forEach(tr=>{
+    const idx=+tr.dataset.idx;
+    tr.querySelectorAll("[data-f]").forEach(inp=>{
+      inp.onchange = ()=>{ const f=inp.dataset.f; risks[idx][f] = (f==='l'||f==='i')? +inp.value : inp.value; save(); renderStats(); renderHeat(); if(f==='l'||f==='i') renderRows(); };
+      if(inp.tagName==='INPUT') inp.oninput=()=>{ risks[idx][inp.dataset.f]=inp.value; save(); };
+    });
+    tr.querySelector(".del").onclick=()=>{ risks.splice(idx,1); save(); renderAll(); };
+  });
+  const cf=document.getElementById("clearF"); if(cf) cf.onclick=()=>{ filter=null; renderHeat(); renderRows(); };
+}
+function opt(v){ let o=""; for(let x=1;x<=5;x++) o+=`<option value="${x}" ${v===x?'selected':''}>${x}</option>`; return o; }
+
+function renderAll(){ renderStats(); renderHeat(); renderRows(); }
+
+// add
+document.getElementById("btnAdd").onclick=()=>{
+  const name=document.getElementById("nName").value.trim(); if(!name){ alert("Въведете наименование на риска."); return; }
+  risks.unshift({ id:"c"+Date.now(), name, cat:nCat.value, l:+nL.value, i:+nI.value, treat:"", owner:"", status:"open" });
+  document.getElementById("nName").value=""; save(); filter=null; renderAll();
+};
+document.getElementById("btnReset").onclick=()=>{ if(confirm("Да възстановя ли библиотеката? Това ще замени текущия регистър.")){ risks=seed(); save(); filter=null; renderAll(); } };
+document.getElementById("btnPrint").onclick=()=>window.print();
+document.getElementById("btnCSV").onclick=()=>{
+  const head=["Риск","Категория","Вероятност","Въздействие","Ниво (В×Н)","Третиране","Отговорник","Статус"];
+  const stMap={open:"Отворен",treating:"В процес",mitigated:"Овладян",accepted:"Приет"};
+  const rows=risks.map(r=>[r.name,r.cat,r.l,r.i,(r.l*r.i)+" "+levelName(r.l*r.i),r.treat||"",r.owner||"",stMap[r.status]||r.status]);
+  const csv=[head,...rows].map(row=>row.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n");
+  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="registar-na-riska.csv"; a.click();
+};
+
+renderAll();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

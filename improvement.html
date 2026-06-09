@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Непрекъснато подобрение — тримесечен график (NIS 2)</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .cadence{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  @media (max-width:900px){ .cadence{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:520px){ .cadence{ grid-template-columns:1fr; } }
+  .cad{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px; }
+  .cad h4{ margin:0 0 8px; color:var(--blue-strong); font-size:14px; border-bottom:2px solid var(--blue-soft); padding-bottom:6px; }
+  .cad.q{ border-color:var(--blue); box-shadow:inset 0 0 0 1px var(--blue); }
+  .cad ul{ margin:0; padding-left:16px; font-size:12.5px; color:var(--ink-soft); } .cad li{ margin-bottom:5px; }
+  .qbox{ border-left:4px solid var(--blue); }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Ръководство · чл. 21, ал. 2, буква „е“ · непрекъснато съответствие</div>
+      <h1>Непрекъснато подобрение</h1>
+      <p>Съответствието с NIS 2 не е еднократен проект, а постоянен процес. Ето какво да правите ежедневно, седмично, месечно, тримесечно и годишно — с акцент върху тримесечния цикъл.</p>
+      <span class="ref">Цикъл „планирай – изпълни – провери – действай“ (PDCA) · в духа на ISO/IEC 27001</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Принципът</h2>
+      <div class="callout law"><b>Чл. 21, ал. 2, буква „е“:</b> „политики и процедури за оценка на ефективността на мерките за управление на риска“. Контролите трябва не само да съществуват, а да работят и да са документирани — това се проверява при одит.</div>
+      <p>Изградете ритъм на доказателства: ежедневни/събитийни за инциденти, седмични за уязвимости, месечни за показатели, тримесечни за рискове и доставчици, годишни за вътрешен одит и управленски преглед.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">🗓</span> Ритъм на дейностите</h2>
+      <div class="cadence">
+        <div class="cad"><h4>Ежедневно / при събитие</h4><ul>
+          <li>Наблюдение и откриване на инциденти</li>
+          <li>Готовност за докладване (24/72 ч)</li>
+          <li>Преглед на аларми (SIEM)</li>
+        </ul></div>
+        <div class="cad"><h4>Седмично</h4><ul>
+          <li>Преглед на сканиранията за уязвимости</li>
+          <li>Изключения в достъпа</li>
+          <li>Статус на критични кръпки</li>
+        </ul></div>
+        <div class="cad"><h4>Месечно</h4><ul>
+          <li>Отчет на KPI/KRI</li>
+          <li>Микро фишинг кампания</li>
+          <li>Преглед на кръпки и конфигурации</li>
+        </ul></div>
+        <div class="cad q"><h4>Тримесечно ★</h4><ul>
+          <li>Преглед на достъпа</li>
+          <li>Преглед на риска и доставчиците</li>
+          <li>Управленски преглед</li>
+        </ul></div>
+        <div class="cad"><h4>Годишно</h4><ul>
+          <li>Вътрешен одит</li>
+          <li>Учение за непрекъсваемост</li>
+          <li>Преглед на политиките</li>
+          <li>Нов пълен GAP анализ</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="section qbox">
+      <h2><span class="nx">★</span> Тримесечен контролен списък</h2>
+      <p class="lead">Минимумът, който да изпълнявате на всяко тримесечие и да документирате:</p>
+      <ul class="checklist">
+        <li><b>Преглед на правата за достъп</b> — особено привилегированите и критичните системи; запишете кой е одобрил и кога.</li>
+        <li><b>Преглед на регистъра на риска</b> — нови рискове, промени в оценките, статус на третирането. <a href="risk-matrix.html">→ Анализ на риска</a></li>
+        <li><b>Преглед на доставчиците</b> — нови/променени доставчици, инциденти при тях, изтичащи договори. <a href="supply-chain.html">→ Верига на доставки</a></li>
+        <li><b>Резултати от обучение и фишинг</b> — анализ на процента докладване/кликове и коригиращи действия. <a href="cyber-hygiene.html">→ Обучение</a></li>
+        <li><b>Тест на резервно копие/възстановяване</b> — частичен тест с измерено време; проверка на логовете. <a href="continuity.html">→ Непрекъсваемост</a></li>
+        <li><b>Преглед на уязвимостите и кръпките</b> — отворени критични уязвимости и спазване на сроковете.</li>
+        <li><b>Преглед на инцидентите</b> за тримесечието и извлечени поуки (lessons learned).</li>
+        <li><b>Актуалност на политиките и контактните данни</b> пред компетентния орган.</li>
+        <li><b>Управленски преглед</b> — доклад с KPI/KRI и решения на ниво ръководство (чл. 20).</li>
+        <li><b>Актуализация на плана за действие</b> от GAP анализа. <a href="gap-analysis.html">→ GAP анализ</a></li>
+      </ul>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">⚑</span> Управленски преглед</h2>
+        <p class="lead">На всяко тримесечие ръководството преглежда и решава по:</p>
+        <ul>
+          <li>статус на риска и значимите инциденти;</li>
+          <li>резултати от одити, тестове и обучения;</li>
+          <li>несъответствия и коригиращи действия;</li>
+          <li>нужда от ресурси и приоритети.</li>
+        </ul>
+        <p>Протоколирайте решенията — това е доказателство за надзора по чл. 20.</p>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🗎</span> Доказателства</h2>
+        <ul>
+          <li>Времеви записи на тримесечните прегледи на достъпа;</li>
+          <li>актуализиран регистър на риска и план за действие;</li>
+          <li>протоколи от управленски прегледи;</li>
+          <li>отчети за тестове на възстановяване;</li>
+          <li>записи за коригиращи действия и подобрения.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Източници</h2>
+      <p class="sources">
+        <a href="https://blog.clarysec.com/posts/continuous-compliance-monitoring-nis2-dora/" target="_blank" rel="noopener">Continuous compliance monitoring (NIS2/DORA)</a> ·
+        <a href="https://kymatio.com/blog/nis2-audit-evidence-checklist" target="_blank" rel="noopener">NIS2 audit evidence guide</a> ·
+        <a href="https://heimdalsecurity.com/blog/nis2-compliance-continuous-compliance/" target="_blank" rel="noopener">Sustainable NIS2 compliance</a> ·
+        <a href="https://www.wolterskluwer.com/en/expert-insights/nis2-compliance-checklist" target="_blank" rel="noopener">NIS2 compliance checklist</a>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Ръководство · Непрекъснато подобрение (NIS 2) · Информативно, без правнообвързваща сила</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

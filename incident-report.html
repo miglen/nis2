@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Управление на инциденти — доклад по NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .layout{ display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+  @media (max-width:920px){ .layout{ grid-template-columns:1fr; } }
+  .formcard label{ display:block; font-size:12.5px; font-weight:600; color:var(--blue-strong); margin:12px 0 5px; }
+  .formcard input, .formcard select, .formcard textarea{ width:100%; border:1px solid var(--blue-line); border-radius:8px;
+    padding:9px 11px; font-family:inherit; font-size:13.5px; color:var(--ink); background:#fff; }
+  .formcard textarea{ resize:vertical; min-height:64px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; } @media (max-width:520px){ .row2{ grid-template-columns:1fr; } }
+  .stagepick{ display:flex; flex-wrap:wrap; gap:8px; }
+  .stagepick label{ flex:1; min-width:120px; border:1px solid var(--blue-line); border-radius:9px; padding:9px 11px; cursor:pointer; margin:0; font-size:13px; }
+  .stagepick label small{ display:block; font-weight:400; color:var(--ink-soft); font-size:11.5px; }
+  .stagepick input{ display:none; } .stagepick label.sel{ border-color:var(--blue); background:var(--blue-soft); box-shadow:inset 0 0 0 1px var(--blue); }
+  .deadlines{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .dl{ font-size:12px; background:var(--blue-soft); color:var(--blue-strong); border-radius:8px; padding:6px 10px; font-weight:600; }
+  .dl.over{ background:var(--no-soft); color:var(--no); }
+
+  /* preview */
+  .preview{ position:sticky; top:70px; }
+  .doc{ background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:26px 28px; font-size:13.5px; }
+  .doc .rh{ border-bottom:2px solid var(--blue-strong); padding-bottom:12px; margin-bottom:14px; }
+  .doc .rh .ttl{ font-family:var(--serif); font-size:19px; color:var(--blue-strong); font-weight:700; }
+  .doc .rh .stg{ display:inline-block; margin-top:6px; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#fff; background:var(--blue); padding:4px 11px; border-radius:999px; }
+  .doc .rh .basis{ font-size:11.5px; color:var(--ink-soft); margin-top:8px; }
+  .doc h4{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--blue); margin:16px 0 6px; border-bottom:1px solid var(--line); padding-bottom:3px; }
+  .doc .kv{ display:grid; grid-template-columns:170px 1fr; gap:4px 12px; margin:3px 0; }
+  .doc .kv .k{ color:var(--ink-soft); } .doc .kv .v{ color:var(--ink); font-weight:600; white-space:pre-wrap; }
+  .doc .blk{ white-space:pre-wrap; margin:2px 0 6px; }
+  .doc .muted{ color:var(--na); font-style:italic; font-weight:400; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Инструмент · чл. 21, ал. 2, буква „б“ · чл. 23 NIS 2</div>
+      <h1>Управление на инциденти — генератор на доклад</h1>
+      <p>Попълнете данните за инцидента и получете структуриран доклад в съответствие със сроковете по NIS 2 — ранно предупреждение (24 ч), уведомление (72 ч), междинен и финален доклад (1 месец). Докладът се обновява в реално време; можете да го отпечатате или свалите.</p>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="layout">
+      <!-- FORM -->
+      <div class="section formcard noprint">
+        <h2><span class="nx">✎</span> Данни за инцидента</h2>
+
+        <label>Вид на доклада</label>
+        <div class="stagepick" id="stagepick">
+          <label data-s="early"><input type="radio" name="stage" value="early" checked>Ранно предупреждение<small>до 24 ч</small></label>
+          <label data-s="notify"><input type="radio" name="stage" value="notify">Уведомление<small>до 72 ч</small></label>
+          <label data-s="interim"><input type="radio" name="stage" value="interim">Междинен<small>при поискване</small></label>
+          <label data-s="final"><input type="radio" name="stage" value="final">Финален<small>до 1 месец</small></label>
+        </div>
+
+        <h3 style="font-size:14px;margin-top:18px">Субект и контакт</h3>
+        <div class="row2">
+          <div><label>Организация</label><input id="org" placeholder="Име на субекта"></div>
+          <div><label>Сектор (Прил. I/II)</label><input id="sector" placeholder="напр. Енергетика"></div>
+        </div>
+        <div class="row2">
+          <div><label>Лице за контакт</label><input id="contact" placeholder="Име, длъжност"></div>
+          <div><label>Телефон / имейл</label><input id="contactInfo" placeholder="+359... / mail@..."></div>
+        </div>
+        <label>Получател (CSIRT / компетентен орган)</label>
+        <input id="recipient" value="Национален CSIRT / компетентен орган по ЗКС">
+
+        <h3 style="font-size:14px;margin-top:18px">Хронология</h3>
+        <div class="row2">
+          <div><label>Узнаване за инцидента (дата/час)</label><input type="datetime-local" id="awareTs"></div>
+          <div><label>Възникване (ако е известно)</label><input type="datetime-local" id="startTs"></div>
+        </div>
+        <div class="deadlines" id="deadlines"></div>
+
+        <h3 style="font-size:14px;margin-top:18px">Описание</h3>
+        <label>Идентификатор на инцидента</label>
+        <input id="incId" placeholder="напр. INC-2026-001">
+        <label>Кратко описание на инцидента</label>
+        <textarea id="desc" placeholder="Какво се случи, как е установено..."></textarea>
+        <label>Засегнати услуги, системи и данни</label>
+        <textarea id="affected" placeholder="Системи, услуги, видове данни..."></textarea>
+
+        <h3 style="font-size:14px;margin-top:18px">Тежест и въздействие</h3>
+        <div class="row2">
+          <div><label>Брой засегнати ползватели</label><input id="users" placeholder="напр. ~1 200"></div>
+          <div><label>Продължителност на прекъсването</label><input id="downtime" placeholder="напр. 3 ч"></div>
+        </div>
+        <label>Оперативно/финансово въздействие</label>
+        <textarea id="impact" placeholder="Степен на нарушение, финансови загуби, обществено въздействие..."></textarea>
+
+        <h3 style="font-size:14px;margin-top:18px">Характер на инцидента</h3>
+        <div class="row2">
+          <div><label>Дължи се на незаконни/злонамерени действия?</label>
+            <select id="malicious"><option value="">— неизвестно —</option><option>Да</option><option>Не</option><option>Подозира се</option></select></div>
+          <div><label>Трансгранично въздействие?</label>
+            <select id="cross"><option value="">— неизвестно —</option><option>Да</option><option>Не</option></select></div>
+        </div>
+        <label>Засегнати други държави членки (ако има)</label>
+        <input id="countries" placeholder="напр. Румъния, Гърция">
+        <label>Индикатори за компрометиране (IoC)</label>
+        <textarea id="ioc" placeholder="IP адреси, хешове, домейни, сигнатури..."></textarea>
+
+        <h3 style="font-size:14px;margin-top:18px">Заплаха и мерки</h3>
+        <label>Вид заплаха / първопричина (за финален доклад)</label>
+        <textarea id="rootcause" placeholder="Първопричина, вид на заплахата..."></textarea>
+        <label>Предприети и планирани мерки за смекчаване</label>
+        <textarea id="measures" placeholder="Сдържане, възстановяване, превенция..."></textarea>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="preview">
+        <div class="toolbar2 noprint" style="margin-bottom:12px">
+          <button class="btn ghost" id="btnClear">Изчисти</button>
+          <span class="spacer"></span>
+          <button class="btn ghost" id="btnDownload">⬇ Свали</button>
+          <button class="btn primary" id="btnPrint">🖨 Отпечатай</button>
+        </div>
+        <div id="doc" class="doc"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Генератор на доклад за инцидент · NIS 2 чл. 23 · Закон за киберсигурност · Проверете точните образци и канали на компетентния орган</footer>
+
+<script>
+const F = ["org","sector","contact","contactInfo","recipient","awareTs","startTs","incId","desc","affected","users","downtime","impact","malicious","cross","countries","ioc","rootcause","measures"];
+const KEY="nis2incident_v1";
+let data = load(); let stage = data._stage || "early";
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
+function save(){ data._stage=stage; localStorage.setItem(KEY, JSON.stringify(data)); }
+
+// hydrate
+F.forEach(id=>{ const el=document.getElementById(id); if(el && data[id]!=null) el.value=data[id]; el && el.addEventListener("input",()=>{ data[id]=el.value; save(); render(); }); });
+document.querySelectorAll('input[name=stage]').forEach(r=>{ if(r.value===stage) r.checked=true; r.addEventListener("change",()=>{ stage=r.value; markStage(); save(); render(); }); });
+function markStage(){ document.querySelectorAll('#stagepick label').forEach(l=>l.classList.toggle('sel', l.dataset.s===stage)); }
+
+const STAGE = {
+  early:{ name:"Ранно предупреждение", basis:"чл. 23, ал. 4, б. „а“ — в срок до 24 часа от узнаването" },
+  notify:{ name:"Уведомление за инцидент", basis:"чл. 23, ал. 4, б. „б“ — в срок до 72 часа от узнаването" },
+  interim:{ name:"Междинен доклад", basis:"чл. 23, ал. 4, б. „в“ — при поискване от CSIRT/органа" },
+  final:{ name:"Финален доклад", basis:"чл. 23, ал. 4, б. „г“ — в срок до един месец" },
+};
+
+function fmt(ts){ if(!ts) return null; try{ const d=new Date(ts); return d.toLocaleString("bg-BG",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}); }catch(e){ return ts; } }
+function addH(ts,h){ const d=new Date(ts); d.setHours(d.getHours()+h); return d; }
+function addMonth(ts){ const d=new Date(ts); d.setMonth(d.getMonth()+1); return d; }
+
+function renderDeadlines(){
+  const el=document.getElementById("deadlines"); const a=document.getElementById("awareTs").value;
+  if(!a){ el.innerHTML=`<span class="dl">Въведете час на узнаване за срокове</span>`; return; }
+  const now=new Date();
+  const d24=addH(a,24), d72=addH(a,72), dM=addMonth(a);
+  const mk=(lbl,d)=>`<span class="dl ${now>d?'over':''}">${lbl}: ${d.toLocaleString("bg-BG",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span>`;
+  el.innerHTML = mk("24 ч",d24)+mk("72 ч",d72)+mk("1 месец",dM);
+}
+
+function v(id){ return (data[id]||"").trim(); }
+function line(k,val){ return `<div class="kv"><div class="k">${k}</div><div class="v">${val?escapeHTML(val):'<span class="muted">—</span>'}</div></div>`; }
+function block(title,val){ return `<h4>${title}</h4><div class="blk">${val?escapeHTML(val):'<span class="muted">не е попълнено</span>'}</div>`; }
+function escapeHTML(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildDoc(){
+  const st=STAGE[stage];
+  const showFull = stage!=="early";
+  const showFinal = stage==="final";
+  let h = `<div class="rh">
+    <div class="ttl">Доклад за инцидент в киберсигурността</div>
+    <div class="stg">${st.name}</div>
+    <div class="basis">Правно основание: ${st.basis} · Директива (ЕС) 2022/2555 (NIS 2)</div>
+  </div>`;
+
+  h += `<h4>Субект и контакт</h4>`;
+  h += line("Организация", v("org"));
+  h += line("Сектор", v("sector"));
+  h += line("Лице за контакт", v("contact"));
+  h += line("Телефон / имейл", v("contactInfo"));
+  h += line("Получател", v("recipient"));
+  h += line("Идентификатор", v("incId"));
+
+  h += `<h4>Хронология</h4>`;
+  h += line("Узнаване за инцидента", fmt(v("awareTs")));
+  h += line("Възникване", fmt(v("startTs")));
+  h += line("Дата на доклада", new Date().toLocaleString("bg-BG",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}));
+
+  h += block("Описание на инцидента", v("desc"));
+
+  // early warning: minimal — malicious/cross-border flags required
+  h += `<h4>Първоначална преценка</h4>`;
+  h += line("Незаконни/злонамерени действия", v("malicious"));
+  h += line("Възможно трансгранично въздействие", v("cross"));
+  if(v("countries")) h += line("Засегнати държави членки", v("countries"));
+
+  if(showFull){
+    h += block("Засегнати услуги, системи и данни", v("affected"));
+    h += `<h4>Тежест и въздействие</h4>`;
+    h += line("Засегнати ползватели", v("users"));
+    h += line("Продължителност на прекъсване", v("downtime"));
+    h += `<div class="blk">${v("impact")?escapeHTML(v("impact")):'<span class="muted">не е попълнено</span>'}</div>`;
+    h += block("Индикатори за компрометиране (IoC)", v("ioc"));
+  }
+  if(showFinal){
+    h += block("Вид заплаха и първопричина", v("rootcause"));
+  }
+  h += block("Предприети и планирани мерки", v("measures"));
+
+  h += `<p class="basis" style="margin-top:16px">Този документ е генериран като помощно средство. Подайте го по официалния канал и образец на компетентния орган.</p>`;
+  return h;
+}
+function render(){ renderDeadlines(); document.getElementById("doc").innerHTML = buildDoc(); }
+
+document.getElementById("btnPrint").onclick=()=>window.print();
+document.getElementById("btnClear").onclick=()=>{ if(confirm("Да изчистя ли всички полета?")){ data={}; save(); F.forEach(id=>{ const e=document.getElementById(id); if(e) e.value=""; }); render(); } };
+document.getElementById("btnDownload").onclick=()=>{
+  const css=`body{font-family:Georgia,serif;color:#1b2733;max-width:760px;margin:24px auto;padding:0 20px;line-height:1.5}
+    .rh{border-bottom:2px solid #0d3a66;padding-bottom:12px;margin-bottom:14px}.ttl{font-size:21px;color:#0d3a66;font-weight:700}
+    .stg{display:inline-block;margin-top:6px;font-size:11px;text-transform:uppercase;color:#fff;background:#15508a;padding:4px 11px;border-radius:999px}
+    .basis{font-size:11.5px;color:#5b6b7b;margin-top:8px}h4{font-size:12px;text-transform:uppercase;color:#15508a;border-bottom:1px solid #e3eaf2;padding-bottom:3px;margin:16px 0 6px}
+    .kv{display:grid;grid-template-columns:180px 1fr;gap:4px 12px;font-size:13.5px}.k{color:#5b6b7b}.v{font-weight:600;white-space:pre-wrap}.blk{white-space:pre-wrap;font-size:13.5px}.muted{color:#8a98a6;font-style:italic}`;
+  const doc=`<!DOCTYPE html><html lang="bg"><head><meta charset="utf-8"><title>Доклад за инцидент — ${escapeHTML(v("incId")||"NIS2")}</title><style>${css}</style></head><body>${buildDoc()}</body></html>`;
+  const blob=new Blob([doc],{type:"text/html;charset=utf-8"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="doklad-incident-"+(v("incId")||"nis2").replace(/[^\wа-яА-Я0-9-]+/g,"_")+".html"; a.click();
+};
+
+markStage(); render();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

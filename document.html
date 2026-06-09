@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Документ от СУИС</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .docmeta{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px 22px; font-size:13px; margin:4px 0 8px; }
+  @media (max-width:680px){ .docmeta{ grid-template-columns:1fr 1fr; } }
+  .docmeta .k{ color:var(--ink-soft); } .docmeta .v{ color:var(--blue-strong); font-weight:600; }
+  .refrow{ display:flex; flex-wrap:wrap; gap:18px; margin-top:10px; }
+  .refrow .grp h4{ margin:0 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); }
+  .refpill{ display:inline-block; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; margin:2px 4px 2px 0; text-decoration:none; }
+  .refpill.nis{ background:var(--blue-soft); color:var(--blue); } .refpill.iso{ background:#efe9fb; color:#6b3fb0; }
+  .sec h3{ color:var(--blue-strong); font-size:16px; margin:18px 0 6px; }
+  .sec p{ font-size:14.5px; margin:0 0 8px; } .sec ul{ font-size:14.5px; }
+  table.roles{ width:100%; border-collapse:collapse; font-size:13.5px; margin-top:6px; }
+  table.roles th, table.roles td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  table.roles th{ color:var(--ink-soft); font-size:11.5px; text-transform:uppercase; }
+  .related{ display:flex; flex-wrap:wrap; gap:8px; }
+  .related a{ text-decoration:none; font-size:13px; font-weight:600; color:var(--blue); background:var(--blue-soft); padding:7px 13px; border-radius:8px; }
+  .related a:hover{ background:#dceaf6; }
+  .backlink{ display:inline-block; margin-bottom:12px; font-size:13px; color:var(--blue); text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="isms.html">📚 СУИС (ISMS) — документи</a>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="supplier-register.html">🏭 Регистър на доставчиците</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+          <a href="crosswalk.html">🧭 ISO 27001 ↔ NIS 2</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <a class="backlink noprint" href="isms.html" style="color:#cfe0f3">← Всички документи (СУИС)</a>
+      <div class="eyebrow" id="docCode">Документ</div>
+      <h1 id="docTitle">…</h1>
+      <p id="docPurpose"></p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="toolbar2 noprint" style="display:flex;gap:10px;margin-bottom:14px">
+      <a class="btn ghost" href="isms.html">📚 Към СУИС</a>
+      <span style="flex:1"></span>
+      <button class="btn ghost" id="btnDownload">⬇ Свали</button>
+      <button class="btn primary" id="btnPrint">🖨 Отпечатай</button>
+    </div>
+
+    <div class="section" id="docCard">
+      <div class="docmeta">
+        <div><span class="k">Код:</span> <span class="v" id="mCode"></span></div>
+        <div><span class="k">Версия:</span> <span class="v">1.0 (шаблон)</span></div>
+        <div><span class="k">Статус:</span> <span class="v">За приемане</span></div>
+        <div><span class="k">Собственик:</span> <span class="v" id="mOwner"></span></div>
+        <div><span class="k">Класификация:</span> <span class="v">Вътрешна</span></div>
+        <div><span class="k">Преглед:</span> <span class="v">Годишно / при промени</span></div>
+      </div>
+      <div class="refrow">
+        <div class="grp"><h4>NIS 2</h4><div id="mNis"></div></div>
+        <div class="grp"><h4>ISO/IEC 27001:2022</h4><div id="mIso"></div></div>
+      </div>
+
+      <h3 style="margin-top:18px;color:var(--blue-strong)">Цел</h3>
+      <p id="sPurpose" class="sec"></p>
+      <h3 style="color:var(--blue-strong)">Обхват</h3>
+      <p id="sScope" class="sec"></p>
+
+      <div id="sections"></div>
+
+      <div id="rolesWrap" style="display:none">
+        <h3 style="color:var(--blue-strong)">Роли и отговорности</h3>
+        <table class="roles"><thead><tr><th>Роля</th><th>Отговорност</th></tr></thead><tbody id="rolesBody"></tbody></table>
+      </div>
+
+      <h3 style="color:var(--blue-strong);margin-top:18px">Свързани документи</h3>
+      <div class="related" id="related"></div>
+
+      <p class="sources" style="margin-top:18px">Шаблон, подравнен с NIS 2 (Директива (ЕС) 2022/2555) и ISO/IEC 27001:2022. Адаптирайте към организацията си и отразете приложимите контроли в <a href="document.html?doc=soa">Декларацията за приложимост (SoA)</a>. Без правнообвързваща сила.</p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">СУИС · документ по NIS 2 / ISO 27001 · <a href="isms.html">Портал на документите</a></footer>
+
+<script src="docs-data.js"></script>
+<script>
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function getId(){ return new URLSearchParams(location.search).get('doc') || ''; }
+
+function linkFor(id){
+  if(DOCS[id]) return { href:"document.html?doc="+id, label:DOCS[id].title };
+  if(typeof DOC_LINKS!=="undefined" && DOC_LINKS[id]) return DOC_LINKS[id];
+  return null;
+}
+
+function render(){
+  const id=getId(); const d=DOCS[id];
+  if(!d){ location.replace("isms.html"); return; }
+  document.title = d.title + " — СУИС";
+  document.getElementById("docCode").textContent = d.code + " · " + d.cat;
+  document.getElementById("docTitle").textContent = d.title;
+  document.getElementById("docPurpose").textContent = d.purpose;
+  document.getElementById("mCode").textContent = d.code;
+  document.getElementById("mOwner").textContent = d.owner || "—";
+  document.getElementById("mNis").innerHTML = (d.nis2||[]).map(n=>`<a class="refpill nis" href="crosswalk.html" title="Виж crosswalk">${esc(n)}</a>`).join("") || "—";
+  document.getElementById("mIso").innerHTML = (d.iso||[]).map(i=>`<span class="refpill iso">${esc(i)}</span>`).join("") || "—";
+  document.getElementById("sPurpose").textContent = d.purpose;
+  document.getElementById("sScope").textContent = d.scope;
+
+  document.getElementById("sections").innerHTML = (d.sections||[]).map(s=>{
+    let body = s.p ? `<p>${esc(s.p)}</p>` : "";
+    if(s.list) body += `<ul>${s.list.map(li=>`<li>${esc(li)}</li>`).join("")}</ul>`;
+    return `<div class="sec"><h3>${esc(s.h)}</h3>${body}</div>`;
+  }).join("");
+
+  if(d.roles && d.roles.length){
+    document.getElementById("rolesWrap").style.display="";
+    document.getElementById("rolesBody").innerHTML = d.roles.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td></tr>`).join("");
+  }
+
+  const rel = (d.related||[]).map(linkFor).filter(Boolean);
+  document.getElementById("related").innerHTML = rel.length ? rel.map(r=>`<a href="${r.href}">${esc(r.label)}</a>`).join("") : '<span style="color:var(--ink-soft)">—</span>';
+}
+
+function buildStandalone(){
+  const id=getId(); const d=DOCS[id]; if(!d) return "";
+  const css=`body{font-family:Georgia,serif;color:#1b2733;max-width:800px;margin:24px auto;padding:0 22px;line-height:1.55}
+    h1{color:#0d3a66;font-size:24px;margin:0 0 4px}.code{color:#5b6b7b;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+    .meta{font-size:12.5px;color:#5b6b7b;margin:10px 0}.meta b{color:#0d3a66}
+    .pills span{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin:2px 4px 2px 0;background:#eef3f8;color:#15508a}
+    h3{color:#0d3a66;font-size:15px;margin:16px 0 5px}ul{margin:4px 0}li{margin:3px 0}
+    table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #e3eaf2;padding:6px 9px;text-align:left}`;
+  const sec=(d.sections||[]).map(s=>{ let b=s.p?`<p>${esc(s.p)}</p>`:""; if(s.list)b+=`<ul>${s.list.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`; return `<h3>${esc(s.h)}</h3>${b}`; }).join("");
+  const roles=(d.roles&&d.roles.length)?`<h3>Роли и отговорности</h3><table><tr><th>Роля</th><th>Отговорност</th></tr>${d.roles.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td></tr>`).join("")}</table>`:"";
+  return `<!DOCTYPE html><html lang="bg"><head><meta charset="utf-8"><title>${esc(d.title)}</title><style>${css}</style></head><body>
+    <div class="code">${esc(d.code)} · ${esc(d.cat)}</div><h1>${esc(d.title)}</h1>
+    <div class="meta">Версия 1.0 (шаблон) · Собственик: <b>${esc(d.owner||"—")}</b> · Класификация: Вътрешна · Преглед: годишно</div>
+    <div class="pills"><b style="font-size:11px;color:#5b6b7b">NIS 2:</b> ${(d.nis2||[]).map(n=>`<span>${esc(n)}</span>`).join("")} &nbsp; <b style="font-size:11px;color:#5b6b7b">ISO 27001:</b> ${(d.iso||[]).map(i=>`<span>${esc(i)}</span>`).join("")}</div>
+    <h3>Цел</h3><p>${esc(d.purpose)}</p><h3>Обхват</h3><p>${esc(d.scope)}</p>
+    ${sec}${roles}
+    <p style="margin-top:16px;font-size:11.5px;color:#5b6b7b">Шаблон по NIS 2 / ISO 27001:2022. Без правнообвързваща сила.</p></body></html>`;
+}
+document.getElementById("btnPrint").onclick=()=>window.print();
+document.getElementById("btnDownload").onclick=()=>{
+  const d=DOCS[getId()]; if(!d) return;
+  const blob=new Blob([buildStandalone()],{type:"text/html;charset=utf-8"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=(d.code+"-"+d.title).replace(/[^\wа-яА-Я0-9-]+/g,"_")+".html"; a.click();
+};
+render();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

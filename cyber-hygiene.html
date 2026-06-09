@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Киберхигиена и обучение — ръководство по NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Ръководство · чл. 21, ал. 2, буква „ж“ · чл. 20, ал. 2</div>
+      <h1>Киберхигиена и обучение</h1>
+      <p>Как да изградите програма за осведоменост и обучение, която реално променя поведението — и можете да докажете, че работи.</p>
+      <span class="ref">4 слоя обучение · ключови теми · фишинг симулации · метрики · документация</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Какво изисква NIS 2</h2>
+      <div class="callout law"><b>Чл. 21, ал. 2, буква „ж“:</b> „основни практики за компютърна хигиена и обучение по въпросите на киберсигурността“. Допълнително <b>чл. 20, ал. 2</b> изисква обучение и за <b>членовете на ръководството</b>.</div>
+      <p>Регулаторът иска доказателства, че поведението се променя и че хората знаят какво да правят при инцидент — не просто проведено обучение.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">≣</span> Структура на програмата (4 слоя)</h2>
+      <div class="grid2">
+        <div class="mini"><h4>1 · Въвеждащо обучение</h4><p>Задължително за всеки нов служител при постъпване.</p></div>
+        <div class="mini"><h4>2 · Годишно опресняване</h4><p>За всички служители, с актуалните заплахи.</p></div>
+        <div class="mini"><h4>3 · Ролево обучение</h4><p>За ИТ администратори, разработчици и екипи за реакция при инциденти.</p></div>
+        <div class="mini"><h4>4 · Обучение за ръководството</h4><p>За управленските задължения и отговорност по NIS 2.</p></div>
+      </div>
+      <div class="callout">Добра практика: обучение поне <b>веднъж годишно</b> за всички, подсилено с фишинг симулации (месечно/тримесечно), бюлетини и целеви сесии при нови заплахи.</div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">◎</span> Ключови теми по киберхигиена</h2>
+      <p class="lead">Фокус върху действия, които хората могат да приложат веднага:</p>
+      <p>
+        <span class="pill">Разпознаване на фишинг</span>
+        <span class="pill">Силни пароли и мениджъри на пароли</span>
+        <span class="pill">Многофакторно удостоверяване</span>
+        <span class="pill">Чисто бюро / чист екран</span>
+        <span class="pill">Безопасен имейл и сърфиране</span>
+        <span class="pill">Социално инженерство</span>
+        <span class="pill">Как и кога да докладвам инцидент</span>
+        <span class="pill">Безопасна работа от разстояние</span>
+        <span class="pill">Обработка на чувствителни данни</span>
+      </p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Стъпки за изграждане и провеждане</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div><h3>Определете обхвата и ролите</h3><p>Кои групи се обучават с какво съдържание (всички, ИТ, разработчици, ръководство).</p></div></div>
+        <div class="step"><div class="sn">2</div><div><h3>Изгответе учебен план и календар</h3><p>Въвеждащо + годишно + ролево + фишинг симулации, с дати.</p></div></div>
+        <div class="step"><div class="sn">3</div><div><h3>Изберете смесен формат</h3><p>Е-обучение, работилници, table-top упражнения и симулации — редовно, релевантно и измеримо.</p></div></div>
+        <div class="step"><div class="sn">4</div><div><h3>Стартирайте фишинг симулации</h3><p>Тествайте реалното поведение. Третирайте провалите като възможност за учене, не за наказание — давайте незабавна обратна връзка и допълнително обучение.</p></div></div>
+        <div class="step"><div class="sn">5</div><div><h3>Измервайте и подобрявайте</h3><p>Следете показателите във времето; групи или хора с висок процент кликове получават допълнително обучение.</p></div></div>
+        <div class="step"><div class="sn">6</div><div><h3>Докладвайте на ръководството</h3><p>Включете резултатите в управленския преглед — културата на сигурност започва отгоре.</p></div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">📈</span> Метрики</h2>
+        <ul>
+          <li><b>Процент на докладване</b> (report rate) — ключов показател за здрава култура, по-важен от ниския процент кликове;</li>
+          <li>процент на кликове по симулации във времето;</li>
+          <li>покритие и участие в обученията;</li>
+          <li>време до докладване на реален инцидент.</li>
+        </ul>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🗎</span> Документация за одит</h2>
+        <ul>
+          <li>Календар и съдържание на кампаниите;</li>
+          <li>анонимизирани резултати (кликове/докладване);</li>
+          <li>записи за участие и покритие;</li>
+          <li>логове на коригиращи действия (допълнително обучение);</li>
+          <li>протоколи от управленски преглед на резултатите.</li>
+        </ul>
+        <p><span class="pill">Свързан инструмент</span> <a href="improvement.html">Непрекъснато подобрение</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Източници</h2>
+      <p class="sources">
+        <a href="https://sosafe-awareness.com/blog/nis2-awareness-steps/" target="_blank" rel="noopener">8 стъпки за NIS2 програма</a> ·
+        <a href="https://www.auditfront.com/frameworks/nis2/risk-management/art-21-2g/" target="_blank" rel="noopener">AuditFront — чл. 21(2)(ж)</a> ·
+        <a href="https://www.isms.online/nis-2/requirements/phishing-simulations/" target="_blank" rel="noopener">ISMS.online — фишинг симулации</a> ·
+        <a href="https://www.techclass.com/resources/learning-and-development-articles/10-key-measures-to-ensure-your-cybersecurity-training-is-nis2-compliant" target="_blank" rel="noopener">10 мерки за NIS2 обучение</a>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Ръководство · Киберхигиена и обучение (NIS 2, чл. 21 и чл. 20) · Информативно, без правнообвързваща сила</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

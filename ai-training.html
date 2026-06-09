@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Обучение: deepfakes и безопасно ползване на AI (NIS 2)</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .dodont{ display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  @media (max-width:720px){ .dodont{ grid-template-columns:1fr; } }
+  .dodont > div{ padding:20px 22px; } .dodont .do{ background:var(--yes-soft); } .dodont .dont{ background:var(--no-soft); }
+  .dodont h3{ margin:0 0 10px; font-size:15px; } .dodont .do h3{ color:var(--yes); } .dodont .dont h3{ color:var(--no); }
+  .dodont ul{ margin:0; padding-left:18px; font-size:14px; } .dodont li{ margin-bottom:7px; }
+  .reslist{ display:grid; grid-template-columns:1fr 1fr; gap:12px; } @media (max-width:720px){ .reslist{ grid-template-columns:1fr; } }
+  .res{ display:block; text-decoration:none; background:#fff; border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:10px; padding:13px 15px; color:var(--ink); }
+  .res:hover{ background:var(--blue-soft); }
+  .res b{ color:var(--blue-strong); display:block; font-size:14.5px; } .res span{ font-size:12.5px; color:var(--ink-soft); }
+  .flags li{ margin-bottom:7px; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Обучение · чл. 21, ал. 2, буква „ж“ · чл. 20, ал. 2</div>
+      <h1>Deepfakes и безопасно ползване на AI</h1>
+      <p>Изкуственият интелект прави атаките по-евтини и по-убедителни — дийпфейк гласове и видеа, AI фишинг в мащаб, измами с „спешни“ нареждания. Това обучение подготвя екипите да разпознават и да реагират, и да ползват AI инструментите безопасно.</p>
+      <span class="ref">Разпознаване на deepfakes · процедури за верификация · безопасен AI · учения · ресурси</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Какво изисква NIS 2</h2>
+      <div class="callout law"><b>Чл. 21, ал. 2, буква „ж“</b> изисква основни практики по киберхигиена и обучение, а <b>чл. 20, ал. 2</b> — обучение и за ръководството. AI заплахите (deepfakes, AI фишинг) и безопасното ползване на AI са естествена част от тази програма.</div>
+      <p>Допълва <a href="cyber-hygiene.html">общата програма за киберхигиена</a> и <a href="document.html?doc=ai-use-policy">Политиката за ползване на AI</a>.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">≣</span> Кого обучаваме</h2>
+      <div class="grid2">
+        <div class="mini"><h4>Всички служители</h4><p>Разпознаване на deepfakes и AI фишинг; безопасно ползване на одобрените AI инструменти.</p></div>
+        <div class="mini"><h4>Финанси и операции</h4><p>Процедури за верификация на плащания и нареждания (висок риск от дийпфейк измами).</p></div>
+        <div class="mini"><h4>Ръководство</h4><p>Целеви дийпфейк измами (CEO fraud); задължения по NIS 2 и управление на AI риска.</p></div>
+        <div class="mini"><h4>ИТ и разработка</h4><p>Сигурно ползване на копилоти, преглед на AI-генериран код, защита на AI агенти.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">⚑</span> Разпознаване на deepfakes</h2>
+      <p class="lead">Сигнали за тревога при глас, видео и съобщения:</p>
+      <ul class="flags">
+        <li>Неочаквана спешност и натиск за бързо действие или поверителност.</li>
+        <li>Необичайно искане — превод, смяна на банкова сметка, споделяне на идентификационни данни.</li>
+        <li>Видео: неестествено мигане, разсинхрон между устни и звук, странни сенки/артефакти по ръбовете.</li>
+        <li>Глас: монотонност, странни паузи, фонов шум, който не пасва.</li>
+        <li>Каналът е „различен от обичайния“ или молба да не се проверява чрез други хора.</li>
+      </ul>
+      <div class="callout warn">Дийпфейкът става все по-съвършен — не разчитайте само на „как изглежда/звучи“. <b>Винаги верифицирайте по независим канал.</b></div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Процедури за верификация</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div><h3>Спрете и не действайте под натиск</h3><p>Никое легитимно спешно нареждане не губи от 10 минути проверка.</p></div></div>
+        <div class="step"><div class="sn">2</div><div><h3>Верифицирайте по втори (out-of-band) канал</h3><p>Обадете се на познат номер или потвърдете лично — не отговаряйте на същия канал, от който дойде искането.</p></div></div>
+        <div class="step"><div class="sn">3</div><div><h3>Прилагайте контрол „четири очи“</h3><p>Плащания и чувствителни нареждания изискват второ независимо одобрение.</p></div></div>
+        <div class="step"><div class="sn">4</div><div><h3>Докладвайте</h3><p>Подайте сигнал към сигурността веднага — дори при съмнение; по-добре фалшива тревога, отколкото пропусната измама.</p></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">✓</span> Безопасно ползване на AI</h2>
+      <div class="dodont">
+        <div class="do"><h3>✔ Правете</h3><ul>
+          <li>Ползвайте само одобрени инструменти (вж. Политиката за AI).</li>
+          <li>Третирайте изхода на AI като чернова — проверявайте фактите и източниците.</li>
+          <li>Минимизирайте данните — споделяйте възможно най-малко.</li>
+          <li>Декларирайте ползването на AI и го впишете в инвентара (AI-BOM).</li>
+        </ul></div>
+        <div class="dont"><h3>✘ Не правете</h3><ul>
+          <li>Не въвеждайте поверителни или лични данни в публични AI инструменти.</li>
+          <li>Не поставяйте изходен код или тайни в неодобрени чатботове.</li>
+          <li>Не вземайте критични решения само на база AI изход.</li>
+          <li>Не инсталирайте неодобрени AI разширения и агенти.</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🎯</span> Учения и симулации</h2>
+        <ul>
+          <li>Симулиран дийпфейк/гласова измама към финансовия екип (table-top).</li>
+          <li>AI-генерирани фишинг кампании с обучителна обратна връзка.</li>
+          <li>Сценарий „спешно нареждане от ръководител“ — упражнение по верификация.</li>
+        </ul>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">📈</span> Метрики</h2>
+        <ul>
+          <li>Процент на докладване на симулирани измами.</li>
+          <li>Покритие и участие в обучението.</li>
+          <li>Спазване на процедурите за верификация при упражнения.</li>
+        </ul>
+        <p><span class="pill">Свързано</span> <a href="cyber-hygiene.html">Киберхигиена</a> · <a href="document.html?doc=ai-use-policy">Политика за AI</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Ресурси за обучение</h2>
+      <div class="reslist">
+        <a class="res" href="https://www.cisa.gov/resources-tools/resources/contextualizing-deepfake-threats-organizations" target="_blank" rel="noopener"><b>CISA — Deepfake threats to organizations</b><span>Насоки за заплахите от дийпфейк и противодействие</span></a>
+        <a class="res" href="https://www.enisa.europa.eu/topics/threat-risk-management/threats-and-trends" target="_blank" rel="noopener"><b>ENISA — Threat landscape</b><span>Тенденции в заплахите, вкл. AI</span></a>
+        <a class="res" href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener"><b>OWASP Top 10 for LLM</b><span>Рисковете на големите езикови модели</span></a>
+        <a class="res" href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener"><b>NIST AI Risk Management Framework</b><span>Рамка за управление на AI риска</span></a>
+        <a class="res" href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener"><b>Регламент за ИИ (EU AI Act)</b><span>Регулаторната рамка на ЕС за ИИ</span></a>
+        <a class="res" href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener"><b>ISO/IEC 42001</b><span>Система за управление на изкуствения интелект</span></a>
+      </div>
+      <p class="sources" style="margin-top:14px">Линковете към външни ресурси са с информативна цел. Проверявайте актуалността им.</p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Обучение · deepfakes и безопасно ползване на AI · NIS 2 (чл. 21 и чл. 20) · информативно</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

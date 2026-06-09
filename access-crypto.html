@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Контрол на достъпа и криптография — ръководство по NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Ръководство · чл. 21, ал. 2, букви „з“, „и“, „й“</div>
+      <h1>Контрол на достъпа и криптография</h1>
+      <p>Как да приложите управление на достъпа с принцип на най-малки права, многофакторно удостоверяване и криптография — техническото ядро на защитата по NIS 2.</p>
+      <span class="ref">Достъп · MFA · PAM · управление на активи · криптиране в покой и при пренос · управление на ключове</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Какво изисква NIS 2</h2>
+      <div class="callout law">
+        <b>Буква „и“:</b> сигурност на човешките ресурси, политики за контрол на достъпа и управление на активите.<br>
+        <b>Буква „й“:</b> многофакторно или непрекъснато удостоверяване, защитени гласови, видео и текстови комуникации и защитени системи за спешна комуникация.<br>
+        <b>Буква „з“:</b> политики и процедури за използване на криптография и, когато е целесъобразно, на криптиране.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Контрол на достъпа</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div>
+          <h3>Политика за контрол на достъпа</h3>
+          <p>Документирана политика на база <b>принцип на най-малки права</b> — потребителите получават само достъпа, необходим за ролята им. Включете и механизми за отнемане на достъп.</p>
+        </div></div>
+        <div class="step"><div class="sn">2</div><div>
+          <h3>Жизнен цикъл на идентичността</h3>
+          <p>Процеси за наемане/преместване/напускане (joiner-mover-leaver): своевременно предоставяне и отнемане на права, ролеви достъп (RBAC).</p>
+        </div></div>
+        <div class="step"><div class="sn">3</div><div>
+          <h3>Многофакторно удостоверяване (MFA)</h3>
+          <p>Внедрете MFA за отдалечен достъп, VPN, привилегировани и облачни акаунти и критичните системи — целта е покритие за всички акаунти, където е възможно. Предпочитайте устойчиви на фишинг методи (<b>FIDO2</b>).</p>
+        </div></div>
+        <div class="step"><div class="sn">4</div><div>
+          <h3>Управление на привилегирован достъп (PAM)</h3>
+          <p>Отделни администраторски акаунти, сесиен контрол, съхранение и ротация на тайните, наблюдение на привилегированите действия.</p>
+        </div></div>
+        <div class="step"><div class="sn">5</div><div>
+          <h3>Управление на активите</h3>
+          <p>Поддържайте инвентар на хардуера, софтуера и данните, с класификация и собственици — основа за прилагане на правилните контроли.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Криптография</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">6</div><div>
+          <h3>Политика за криптография</h3>
+          <p>Определете кои данни се криптират, с какви алгоритми и как се управляват ключовете.</p>
+        </div></div>
+        <div class="step"><div class="sn">7</div><div>
+          <h3>Криптиране в покой</h3>
+          <p>Криптирайте чувствителните данни в бази, файлови системи, резервни копия и преносими носители с <b>AES-256</b> или еквивалент.</p>
+        </div></div>
+        <div class="step"><div class="sn">8</div><div>
+          <h3>Криптиране при пренос</h3>
+          <p>Налагайте <b>TLS 1.2+</b> за вътрешни и външни комуникации с чувствителни данни; деактивирайте остарели протоколи (SSL, TLS 1.0/1.1).</p>
+        </div></div>
+        <div class="step"><div class="sn">9</div><div>
+          <h3>Управление на ключовете</h3>
+          <p>Сигурно генериране, съхранение (HSM/съхранилище), ротация и отнемане на криптографските ключове; разделяне на задълженията.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">✓</span> Контролен списък</h2>
+        <ul class="checklist">
+          <li>Политика за достъп с най-малки права</li>
+          <li>Процеси joiner-mover-leaver и ролеви достъп</li>
+          <li>MFA за всички критични и отдалечени достъпи</li>
+          <li>Устойчиви на фишинг методи (FIDO2) където е възможно</li>
+          <li>PAM за привилегировани акаунти</li>
+          <li>Инвентар и класификация на активите</li>
+          <li>Криптиране в покой (AES-256)</li>
+          <li>TLS 1.2+ и спрени стари протоколи</li>
+          <li>Управление и ротация на ключовете</li>
+        </ul>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🗎</span> Доказателства за одит</h2>
+        <ul>
+          <li>Политики за достъп и криптография;</li>
+          <li>Записи от тримесечни прегледи на достъпа (кой одобрил, кога);</li>
+          <li>Отчети за покритие на MFA;</li>
+          <li>Инвентар на активите;</li>
+          <li>Конфигурации за криптиране и управление на ключове.</li>
+        </ul>
+        <p><span class="pill">Свързан инструмент</span> <a href="improvement.html">Непрекъснато подобрение</a> · <a href="gap-analysis.html">GAP анализ</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Източници</h2>
+      <p class="sources">
+        <a href="https://opsiocloud.com/in/blogs/nis2-technical-requirements-mfa-encryption/" target="_blank" rel="noopener">NIS2 MFA & encryption</a> ·
+        <a href="https://www.cyberday.ai/blog/iso-27001-and-nis2-access-control-mfa" target="_blank" rel="noopener">Access control & MFA (ISO 27001)</a> ·
+        <a href="https://www.isdecisions.com/en/blog/mfa/comply-with-nis2-directive-mfa-requirements" target="_blank" rel="noopener">NIS2 MFA requirements</a> ·
+        <a href="https://www.passbolt.com/blog/nis2-requirements-why-credential-security-is-non-optional" target="_blank" rel="noopener">Credential security & NIS2</a>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Ръководство · Контрол на достъпа и криптография (NIS 2, чл. 21) · Информативно, без правнообвързваща сила</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

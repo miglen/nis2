@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NIS 2 — GAP анализ на съответствието</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  :root {
+    --blue: #15508a; --blue-strong: #0d3a66; --blue-soft: #eaf1f9; --blue-line: #cfdef0;
+    --ink: #1b2733; --ink-soft: #5b6b7b; --bg: #f4f7fb; --panel: #ffffff; --line: #e3eaf2;
+    --yes: #1a7f4b; --yes-soft: #e9f7ef; --partial: #c98a00; --partial-soft: #fbf3df;
+    --no: #b42318; --no-soft: #fdecea; --na: #8a98a6;
+    --radius: 12px; --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: "Georgia", "Times New Roman", serif; --shadow: 0 2px 12px rgba(20,50,90,.08); --shadow-lg: 0 10px 34px rgba(20,50,90,.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--bg); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+
+  .topbar { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 18px; padding: 10px 28px; }
+  .topbar .brand { font-weight: 700; color: var(--blue-strong); font-family: var(--serif); font-size: 15px; }
+  .topbar .links { margin-left: auto; display: flex; gap: 6px; }
+  .topbar a { text-decoration: none; font-size: 13px; font-weight: 600; padding: 6px 13px; border-radius: 999px; color: var(--blue); }
+  .topbar a.active { background: var(--blue); color: #fff; }
+  .topbar a:not(.active):hover { background: var(--blue-soft); }
+
+  header.head { background: linear-gradient(180deg, var(--blue) 0%, var(--blue-strong) 100%); color: #fff; padding: 26px 28px 22px; }
+  header.head .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  header.head h1 { font-family: var(--serif); font-size: 27px; margin: 6px 0 4px; }
+  header.head p { margin: 0; opacity: .9; font-size: 14px; max-width: 80ch; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 22px 22px 80px; }
+
+  /* stepper */
+  .stepper { display: flex; gap: 6px; margin-bottom: 22px; flex-wrap: wrap; }
+  .stepper .st { flex: 1; min-width: 90px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; }
+  .stepper .bar { height: 5px; border-radius: 999px; background: var(--blue-line); }
+  .stepper .st.done .bar { background: var(--blue); }
+  .stepper .st.current .bar { background: var(--blue-strong); }
+  .stepper .lbl { font-size: 11.5px; color: var(--ink-soft); font-weight: 600; }
+  .stepper .st.current .lbl { color: var(--blue-strong); }
+
+  .card { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 28px; }
+  .card h2 { font-family: var(--serif); color: var(--blue-strong); font-size: 23px; margin: 0 0 6px; }
+  .card .desc { color: var(--ink-soft); font-size: 14.5px; margin: 0 0 22px; }
+
+  /* form fields */
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 7px; color: var(--blue-strong); }
+  .field input[type=text], .field select { width: 100%; padding: 11px 13px; border: 1px solid var(--blue-line); border-radius: 9px; font-size: 15px; font-family: inherit; color: var(--ink); background: #fff; }
+  .field select optgroup { font-style: normal; font-weight: 700; color: var(--blue-strong); }
+  .sizes { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .sizes label { display: block; border: 1px solid var(--blue-line); border-radius: 10px; padding: 13px 14px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink); }
+  .sizes label small { display: block; font-weight: 400; color: var(--ink-soft); font-size: 12.5px; margin-top: 2px; }
+  .sizes input { display: none; }
+  .sizes label.sel { border-color: var(--blue); background: var(--blue-soft); box-shadow: inset 0 0 0 1px var(--blue); }
+
+  .classbox { margin-top: 6px; border-radius: 12px; padding: 16px 18px; font-size: 14px; }
+  .classbox.essential { background: var(--blue-soft); border: 1px solid var(--blue-line); }
+  .classbox.important { background: var(--yes-soft); border: 1px solid #cdeBd8; }
+  .classbox.out { background: var(--partial-soft); border: 1px solid #ecdcae; }
+  .classbox b { color: var(--blue-strong); }
+  .classbox .tag { display: inline-block; font-weight: 700; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--blue); padding: 4px 11px; border-radius: 999px; margin-bottom: 8px; }
+  .classbox.important .tag { background: var(--yes); }
+  .classbox.out .tag { background: var(--partial); }
+
+  /* requirement items */
+  .req { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .req .q { font-weight: 600; font-size: 15px; color: var(--ink); }
+  .req .why { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
+  .seg { display: inline-flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 0; }
+  .seg button { border: 1px solid var(--blue-line); background: #fff; color: var(--ink-soft); padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .seg button:hover { background: var(--blue-soft); }
+  .seg button.on.yes { background: var(--yes-soft); border-color: var(--yes); color: var(--yes); }
+  .seg button.on.partial { background: var(--partial-soft); border-color: var(--partial); color: var(--partial); }
+  .seg button.on.no { background: var(--no-soft); border-color: var(--no); color: var(--no); }
+  .seg button.on.na { background: #eef1f4; border-color: var(--na); color: var(--na); }
+  .req textarea { width: 100%; margin-top: 11px; padding: 9px 12px; border: 1px solid var(--blue-line); border-radius: 9px; font-family: inherit; font-size: 13.5px; resize: vertical; min-height: 38px; color: var(--ink); display: none; }
+  .req.show-note textarea { display: block; }
+
+  .catmeta { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); margin-bottom: 18px; }
+  .catmeta .pc { font-weight: 700; color: var(--blue-strong); }
+  .progline { flex: 1; height: 6px; background: var(--blue-line); border-radius: 999px; overflow: hidden; }
+  .progline i { display: block; height: 100%; background: var(--blue); width: 0; transition: width .3s; }
+
+  /* nav buttons */
+  .nav { display: flex; gap: 12px; margin-top: 22px; }
+  .nav .spacer { flex: 1; }
+  button.btn { border: 0; border-radius: 999px; padding: 12px 24px; font-size: 14.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  button.btn.primary { background: var(--blue); color: #fff; box-shadow: var(--shadow); }
+  button.btn.primary:hover { background: var(--blue-strong); }
+  button.btn.ghost { background: #fff; color: var(--blue); border: 1px solid var(--blue-line); }
+  button.btn.ghost:hover { background: var(--blue-soft); }
+  button.btn:disabled { opacity: .4; cursor: default; }
+
+  /* report */
+  .gauge { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .ring { --pct: 0; width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--blue) calc(var(--pct)*1%), var(--blue-line) 0); display: flex; align-items: center; justify-content: center; flex: none; }
+  .ring span { width: 92px; height: 92px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; color: var(--blue-strong); font-family: var(--serif); }
+  .counts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .count { border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 600; }
+  .count b { display: block; font-size: 22px; font-family: var(--serif); }
+  .count.yes { background: var(--yes-soft); color: var(--yes); }
+  .count.partial { background: var(--partial-soft); color: var(--partial); }
+  .count.no { background: var(--no-soft); color: var(--no); }
+  .count.na { background: #eef1f4; color: var(--na); }
+
+  .repcat { margin-top: 22px; }
+  .repcat h3 { font-size: 16px; color: var(--blue-strong); margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
+  .repcat .mini { flex: 1; height: 6px; background: var(--blue-line); border-radius: 999px; max-width: 160px; overflow: hidden; }
+  .repcat .mini i { display: block; height: 100%; background: var(--blue); }
+  .repcat .pct { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+
+  .action { border-left: 4px solid var(--no); background: var(--no-soft); border-radius: 8px; padding: 11px 15px; margin-top: 10px; }
+  .action.med { border-left-color: var(--partial); background: var(--partial-soft); }
+  .action .pri { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .action.high .pri { color: var(--no); } .action.med .pri { color: var(--partial); }
+  .action .req-t { font-weight: 700; color: var(--ink); margin: 2px 0; font-size: 14.5px; }
+  .action .do { font-size: 13.5px; color: var(--ink); } .action .do b { color: var(--blue-strong); }
+  .action .yournote { font-size: 12.5px; color: var(--ink-soft); font-style: italic; margin-top: 4px; }
+  .donelist { margin-top: 8px; } .donelist .di { font-size: 13.5px; color: var(--ink-soft); padding: 4px 0; }
+  .donelist .di::before { content: "✓ "; color: var(--yes); font-weight: 700; }
+
+  .repmeta { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px 24px; font-size: 14px; margin: 14px 0 6px; }
+  .repmeta div span { color: var(--ink-soft); } .repmeta div b { color: var(--blue-strong); }
+
+  .saved { font-size: 12px; color: var(--ink-soft); margin-left: 8px; }
+
+  @media (max-width: 720px) { .sizes { grid-template-columns: 1fr; } .repmeta { grid-template-columns: 1fr; } }
+  @media print {
+    .topbar, .stepper, .nav, .noprint, header.head .eyebrow { display: none !important; }
+    body { background: #fff; } .card { box-shadow: none; padding: 0; } header.head { background: #0d3a66 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .action, .count, .classbox, .ring { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <header class="head">
+    <div class="eyebrow">NIS 2 · Самооценка на съответствието</div>
+    <h1>GAP анализ по Закона за киберсигурност</h1>
+    <p>Изберете сектора си, преминете през изискванията на NIS 2 модул по модул и отбележете какво вече правите. Накрая ще получите доклад с приоритетен план за действие, който можете да отпечатате или свалите.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="stepper" id="stepper"></div>
+    <div id="content"></div>
+    <div class="nav noprint" id="nav"></div>
+  </div>
+
+<script>
+/* ============ DATA ============ */
+const SECTORS = {
+  // Annex I — висока критичност
+  "Енергетика": 1, "Транспорт": 1, "Банкиране": 1, "Инфраструктури на финансовия пазар": 1,
+  "Здравеопазване": 1, "Питейна вода": 1, "Отпадъчни води": 1,
+  "Цифрова инфраструктура (DNS, TLD, далекосъобщения, удостоверителни услуги)": 1,
+  "Управление на ИКТ услуги (B2B)": 1, "Публична администрация": 1, "Космическо пространство": 1,
+  // Annex II — други критични сектори
+  "Пощенски и куриерски услуги": 2, "Управление на отпадъци": 2,
+  "Производство и търговия с химикали": 2, "Производство и дистрибуция на храни": 2,
+  "Производство (изделия, електроника, машини, превозни средства)": 2,
+  "Доставчици на цифрови услуги (онлайн пазари, търсачки, социални мрежи)": 2,
+  "Научни изследвания": 2, "Образователни институции (научни дейности)": 2,
+};
+// sectors essential regardless of size
+const ALWAYS_ESSENTIAL = ["Цифрова инфраструктура (DNS, TLD, далекосъобщения, удостоверителни услуги)"];
+
+const CATS = [
+  { id: "gov", title: "Управление и отговорност на ръководството", ref: "Модул 3 · чл. 20 NIS 2",
+    intro: "NIS 2 поставя киберсигурността на ниво управителен орган. Оценете ангажираността на ръководството.",
+    items: [
+      { id:"gov1", q:"Ръководството одобрява мерките за управление на киберриска.", why:"Чл. 20, ал. 1 — управителните органи одобряват мерките, а не само ги делегират.", action:"Въведете формално одобрение на политиката за киберсигурност от ръководството (решение/протокол)." },
+      { id:"gov2", q:"Ръководството упражнява надзор върху прилагането на мерките.", why:"Чл. 20, ал. 1 — надзор върху изпълнението от ръководството.", action:"Установете периодичен доклад за киберсигурност към ръководството (напр. тримесечно)." },
+      { id:"gov3", q:"Членовете на ръководството преминават обучение по киберсигурност.", why:"Чл. 20, ал. 2 — задължително обучение на ръководството.", action:"Организирайте обучение за ръководството относно киберрискове и задължения по NIS 2." },
+      { id:"gov4", q:"Осигурени са бюджет, хора и време за киберсигурност.", why:"Предпоставка за реалното прилагане на мерките по чл. 21.", action:"Заделете годишен бюджет и определете отговорни лица за киберсигурност." },
+      { id:"gov5", q:"Дефинирана е персонална отговорност на ниво ръководство.", why:"Чл. 20, ал. 1 — ръководството носи отговорност за нарушения.", action:"Определете член на ръководството, отговорен за киберсигурността." },
+    ]},
+  { id: "rm", title: "Мерки за управление на риска", ref: "Модул 2 · чл. 21 NIS 2",
+    intro: "Минималният набор технически и организационни мерки, базиран на оценка на риска.",
+    items: [
+      { id:"rm1", q:"Имате политики за анализ на риска и за сигурност на информационните системи.", why:"Чл. 21, ал. 2, буква „а“ — основата на всички останали мерки.", action:"Изгответе и приемете политика за управление на риска и за информационна сигурност." },
+      { id:"rm2", q:"Имате процес за управление на инциденти (откриване, реакция, възстановяване).", why:"Чл. 21, ал. 2, буква „б“.", action:"Въведете процедура за откриване, реакция и възстановяване при инциденти." },
+      { id:"rm3", q:"Имате непрекъсваемост на дейността — резервни копия, възстановяване след бедствие и управление на кризи.", why:"Чл. 21, ал. 2, буква „в“.", action:"Изгответе план за непрекъсваемост (BCP) и възстановяване (DRP) с редовни резервни копия." },
+      { id:"rm4", q:"Управлявате сигурността на веригата на доставки и на отношенията с доставчици.", why:"Чл. 21, ал. 2, буква „г“ — доставчиците са често най-слабото звено.", action:"Оценявайте сигурността на доставчиците и включвайте изисквания в договорите." },
+      { id:"rm5", q:"Имате сигурност при придобиване, разработка и поддръжка на мрежи и системи, вкл. обработване и разкриване на уязвимости.", why:"Чл. 21, ал. 2, буква „д“.", action:"Въведете процес за обработване и разкриване на уязвимости и за сигурна разработка и поддръжка." },
+      { id:"rm6", q:"Оценявате ефективността на мерките за управление на киберриска.", why:"Чл. 21, ал. 2, буква „е“.", action:"Дефинирайте метрики и периодични прегледи/одити на мерките." },
+      { id:"rm7", q:"Прилагате основни практики по киберхигиена и обучавате персонала.", why:"Чл. 21, ал. 2, буква „ж“.", action:"Провеждайте редовно обучение и кампании за осведоменост." },
+      { id:"rm8", q:"Имате политики и процедури за криптография и при необходимост криптиране.", why:"Чл. 21, ал. 2, буква „з“.", action:"Приемете политика за криптография и криптирайте чувствителните данни." },
+      { id:"rm9", q:"Имате сигурност на човешките ресурси, контрол на достъпа и управление на активите.", why:"Чл. 21, ал. 2, буква „и“.", action:"Въведете управление на достъпа (роли, най-малки права) и инвентар на активите." },
+      { id:"rm10", q:"Използвате многофакторно (или непрекъснато) удостоверяване, защитени гласови, видео и текстови комуникации и защитени системи за спешна комуникация.", why:"Чл. 21, ал. 2, буква „й“.", action:"Активирайте MFA и осигурете защитени канали за комуникация, вкл. за спешни случаи." },
+    ]},
+  { id: "ir", title: "Докладване на инциденти", ref: "Модул 4 · чл. 23 NIS 2",
+    intro: "NIS 2 въвежда кратки и ясни срокове за уведомяване при значими инциденти.",
+    items: [
+      { id:"ir1", q:"Имате процес за откриване и класифициране на значими инциденти.", why:"Само „значими“ инциденти пораждат задължение за докладване (чл. 23).", action:"Дефинирайте критерии за значим инцидент и процес за класифициране." },
+      { id:"ir2", q:"Можете да подадете ранно предупреждение до 24 часа от узнаването.", why:"Чл. 23 — ранното предупреждение посочва и дали инцидентът е вероятно от злонамерени действия или с трансгранично въздействие.", action:"Подгответе образец и канал за ранно предупреждение до CSIRT/органа (24 ч)." },
+      { id:"ir3", q:"Можете да подадете уведомление за инцидент до 72 часа с първоначална оценка.", why:"Чл. 23 — оценка на тежестта, въздействието и индикатори за компрометиране.", action:"Осигурете способност за пълно уведомление с оценка в рамките на 72 часа." },
+      { id:"ir4", q:"Изготвяте финален (и при поискване — междинен) доклад в срок до 1 месец.", why:"Чл. 23 — междинен доклад при поискване от CSIRT; финален доклад до 1 месец.", action:"Въведете процес за междинен и финален доклад в едномесечен срок." },
+      { id:"ir5", q:"Уведомявате получателите на услугата при значителни инциденти и заплахи.", why:"Чл. 23 — информиране на ползвателите и възможни мерки за защита.", action:"Подгответе процедура за информиране на клиенти/потребители при необходимост." },
+    ]},
+  { id: "rg", title: "Регистрация и съответствие", ref: "Модул 5 · нови глави · чл. 4",
+    intro: "Задължения за определяне на обхвата, регистрация и поддържане на актуалност.",
+    items: [
+      { id:"rg1", q:"Определили сте дали и как попадате в обхвата (съществен/важен субект).", why:"Първа стъпка към съответствие.", action:"Документирайте анализа за обхват и категорията на субекта." },
+      { id:"rg2", q:"Регистрирани сте пред компетентния орган / единното звено за контакт.", why:"NIS 2 изисква регистрация на субектите.", action:"Извършете регистрация и подайте изискваните данни." },
+      { id:"rg3", q:"Поддържате актуални данни за контакт пред органите.", why:"Данните трябва да са винаги актуални.", action:"Определете отговорник и поддържайте актуални данни за контакт." },
+      { id:"rg4", q:"Следите секторните изисквания, наредби и срокове.", why:"Подзаконовата уредба конкретизира мерките.", action:"Проследявайте наредбите и сроковете за вашия сектор." },
+    ]},
+];
+
+const STATUSES = [
+  { key:"yes", label:"Да", score:1 },
+  { key:"partial", label:"Частично", score:0.5 },
+  { key:"no", label:"Не", score:0 },
+  { key:"na", label:"Н/П", score:null },
+];
+const STATUS_LABEL = { yes:"Да", partial:"Частично", no:"Не", na:"Неприложимо" };
+
+/* ============ STATE ============ */
+const KEY = "nis2gap_v1";
+let state = load() || { org:"", sector:"", size:"", answers:{} };
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+const STEPS = ["start", ...CATS.map(c=>c.id), "report"];
+let step = 0;
+
+/* ============ HELPERS ============ */
+function classify(){
+  const sector = state.sector, size = state.size;
+  if(!sector || !size) return null;
+  const annex = SECTORS[sector];
+  if(ALWAYS_ESSENTIAL.includes(sector))
+    return { cls:"essential", name:"Съществен субект", regime:"Проактивен надзор — предварителни проверки и одити.", sanction:"до 10 млн. € или 2% от световния годишен оборот" };
+  if(size==="small")
+    return { cls:"out", name:"По принцип извън обхвата", regime:"Малките и микропредприятията обикновено са извън обхвата — с изключения (далекосъобщения, DNS, удостоверителни услуги и др.).", sanction:"—" };
+  if(annex===1 && size==="large")
+    return { cls:"essential", name:"Съществен субект", regime:"Проактивен надзор — предварителни проверки и одити.", sanction:"до 10 млн. € или 2% от световния годишен оборот" };
+  return { cls:"important", name:"Важен субект", regime:"Последващ надзор — при сигнал или инцидент.", sanction:"до 7 млн. € или 1,4% от световния годишен оборот" };
+}
+function catScore(cat){
+  let sum=0, base=0, answered=0;
+  cat.items.forEach(it=>{
+    const a = state.answers[it.id];
+    if(!a || a.status===undefined) return;
+    answered++;
+    const s = STATUSES.find(x=>x.key===a.status);
+    if(s.score===null) return;        // N/A excluded
+    base++; sum += s.score;
+  });
+  return { pct: base? Math.round(sum/base*100) : 0, answered, total: cat.items.length, base };
+}
+function overall(){
+  let sum=0, base=0, c={yes:0,partial:0,no:0,na:0}, total=0, answered=0;
+  CATS.forEach(cat=>cat.items.forEach(it=>{
+    total++;
+    const a = state.answers[it.id];
+    if(!a || a.status===undefined) return;
+    answered++; c[a.status]++;
+    const s = STATUSES.find(x=>x.key===a.status);
+    if(s.score!==null){ base++; sum+=s.score; }
+  }));
+  return { pct: base?Math.round(sum/base*100):0, counts:c, total, answered };
+}
+
+/* ============ RENDER ============ */
+const content = document.getElementById("content");
+const nav = document.getElementById("nav");
+
+function renderStepper(){
+  const labels = ["Старт", ...CATS.map(c=>c.title.split(" ").slice(0,2).join(" ")), "Доклад"];
+  document.getElementById("stepper").innerHTML = STEPS.map((s,k)=>`
+    <div class="st ${k<step?'done':''} ${k===step?'current':''}" data-k="${k}">
+      <div class="bar"></div><div class="lbl">${k+1}. ${labels[k]}</div>
+    </div>`).join("");
+  document.querySelectorAll("#stepper .st").forEach(el=>{
+    el.onclick = ()=>{ const k=+el.dataset.k; if(k<=maxReachable()) go(k); };
+  });
+}
+function maxReachable(){ return classify()? STEPS.length-1 : 0; }
+
+function render(){
+  renderStepper();
+  const id = STEPS[step];
+  if(id==="start") renderStart();
+  else if(id==="report") renderReport();
+  else renderCat(CATS.find(c=>c.id===id));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderStart(){
+  const opts = (annex)=>Object.keys(SECTORS).filter(s=>SECTORS[s]===annex)
+    .map(s=>`<option value="${s}" ${state.sector===s?'selected':''}>${s}</option>`).join("");
+  content.innerHTML = `
+    <div class="card">
+      <h2>Профил на организацията</h2>
+      <p class="desc">Изберете сектора и размера, за да определим дали сте съществен или важен субект и какъв е надзорният режим.</p>
+      <div class="field">
+        <label>Организация (по избор)</label>
+        <input type="text" id="org" placeholder="Име на организацията" value="${state.org?state.org.replace(/"/g,'&quot;'):''}">
+      </div>
+      <div class="field">
+        <label>Сектор по NIS 2</label>
+        <select id="sector">
+          <option value="">— изберете сектор —</option>
+          <optgroup label="Приложение I — висока критичност">${opts(1)}</optgroup>
+          <optgroup label="Приложение II — други критични сектори">${opts(2)}</optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Размер на предприятието</label>
+        <div class="sizes" id="sizes">
+          <label class="${state.size==='small'?'sel':''}"><input type="radio" name="sz" value="small"><b>Малко / микро</b><small>под 50 служители</small></label>
+          <label class="${state.size==='medium'?'sel':''}"><input type="radio" name="sz" value="medium"><b>Средно</b><small>50–249 служители</small></label>
+          <label class="${state.size==='large'?'sel':''}"><input type="radio" name="sz" value="large"><b>Голямо</b><small>250+ служители</small></label>
+        </div>
+      </div>
+      <div id="classOut"></div>
+    </div>`;
+  document.getElementById("org").oninput = e=>{ state.org=e.target.value; save(); };
+  document.getElementById("sector").onchange = e=>{ state.sector=e.target.value; save(); updateClass(); renderNav(); };
+  document.querySelectorAll('#sizes input').forEach(r=>{
+    r.onchange = ()=>{ state.size=r.value; save(); document.querySelectorAll('#sizes label').forEach(l=>l.classList.remove('sel')); r.closest('label').classList.add('sel'); updateClass(); renderNav(); };
+  });
+  updateClass();
+}
+function updateClass(){
+  const c = classify(); const box = document.getElementById("classOut");
+  if(!box) return;
+  if(!c){ box.innerHTML=""; return; }
+  box.innerHTML = `<div class="classbox ${c.cls}"><span class="tag">${c.name}</span>
+    <div><b>Надзорен режим:</b> ${c.regime}</div>
+    ${c.sanction!=="—"?`<div style="margin-top:4px"><b>Възможни санкции:</b> ${c.sanction}</div>`:''}</div>`;
+}
+
+function renderCat(cat){
+  const sc = catScore(cat);
+  content.innerHTML = `
+    <div class="card">
+      <h2>${cat.title}</h2>
+      <p class="desc">${cat.intro} <span style="color:var(--blue)">· ${cat.ref}</span></p>
+      <div class="catmeta">
+        <span class="pc"><span id="catPct">${sc.answered}</span>/${cat.items.length} отговорени</span>
+        <span class="progline"><i id="catBar" style="width:${Math.round(sc.answered/cat.items.length*100)}%"></i></span>
+      </div>
+      ${cat.items.map(it=>reqHTML(it)).join("")}
+    </div>`;
+  bindReqs(cat);
+}
+function reqHTML(it){
+  const a = state.answers[it.id] || {};
+  const showNote = a.status==="yes" || a.status==="partial";
+  return `<div class="req ${showNote?'show-note':''}" data-id="${it.id}">
+    <div class="q">${it.q}</div>
+    <div class="why">${it.why}</div>
+    <div class="seg">
+      ${STATUSES.map(s=>`<button class="${s.key} ${a.status===s.key?'on':''}" data-s="${s.key}">${s.label}</button>`).join("")}
+    </div>
+    <textarea placeholder="Как го правите / бележки (по избор)">${a.note?a.note.replace(/</g,'&lt;'):''}</textarea>
+  </div>`;
+}
+function bindReqs(cat){
+  content.querySelectorAll(".req").forEach(reqEl=>{
+    const id = reqEl.dataset.id;
+    reqEl.querySelectorAll(".seg button").forEach(b=>{
+      b.onclick = ()=>{
+        state.answers[id] = Object.assign({}, state.answers[id], { status:b.dataset.s });
+        save();
+        reqEl.querySelectorAll(".seg button").forEach(x=>x.classList.remove("on"));
+        b.classList.add("on");
+        const showNote = b.dataset.s==="yes" || b.dataset.s==="partial";
+        reqEl.classList.toggle("show-note", showNote);
+        const sc = catScore(cat);
+        content.querySelector("#catPct").textContent = sc.answered;
+        content.querySelector("#catBar").style.width = Math.round(sc.answered/cat.items.length*100)+"%";
+      };
+    });
+    reqEl.querySelector("textarea").oninput = e=>{
+      state.answers[id] = Object.assign({}, state.answers[id], { note:e.target.value }); save();
+    };
+  });
+}
+
+/* ===== report ===== */
+function reportBody(){
+  const c = classify();
+  const o = overall();
+  const today = new Date().toLocaleDateString("bg-BG", {year:"numeric",month:"long",day:"numeric"});
+  // gaps collected across cats
+  const high=[], med=[], done=[];
+  CATS.forEach(cat=>cat.items.forEach(it=>{
+    const a = state.answers[it.id];
+    const st = a && a.status;
+    if(st==="yes") done.push({cat, it, note:a.note});
+    else if(st==="partial") med.push({cat, it, st, note:a&&a.note});
+    else if(st==="no") high.push({cat, it, st:"no", note:a&&a.note});
+    else if(st==="na") { /* skip */ }
+    else high.push({cat, it, st:"none", note:""}); // unanswered = gap
+  }));
+  const actionHTML = (g)=>{
+    const isHigh = g.st==="no" || g.st==="none";
+    const priTxt = isHigh ? (g.st==="none"?"Висок · не е оценено":"Висок приоритет") : "Среден приоритет";
+    return `<div class="action ${isHigh?'high':'med'}">
+      <div class="pri">${priTxt} · ${g.cat.title}</div>
+      <div class="req-t">${g.it.q}</div>
+      <div class="do"><b>Какво да направите:</b> ${g.it.action}</div>
+      ${g.note?`<div class="yournote">Ваша бележка: ${g.note.replace(/</g,'&lt;')}</div>`:''}
+    </div>`;
+  };
+  const catRows = CATS.map(cat=>{
+    const sc = catScore(cat);
+    return `<div class="repcat"><h3>${cat.title}
+      <span class="mini"><i style="width:${sc.pct}%"></i></span><span class="pct">${sc.pct}%</span></h3></div>`;
+  }).join("");
+
+  return `
+    <div class="card" id="reportArea">
+      <h2>Доклад от GAP анализа</h2>
+      <div class="repmeta">
+        <div><span>Организация:</span> <b>${state.org||"—"}</b></div>
+        <div><span>Дата:</span> <b>${today}</b></div>
+        <div><span>Сектор:</span> <b>${state.sector||"—"}</b></div>
+        <div><span>Категория субект:</span> <b>${c?c.name:"—"}</b></div>
+      </div>
+      ${c?`<div class="classbox ${c.cls}"><span class="tag">${c.name}</span>
+        <div><b>Надзорен режим:</b> ${c.regime}</div>
+        ${c.sanction!=="—"?`<div style="margin-top:4px"><b>Възможни санкции:</b> ${c.sanction}</div>`:''}</div>`:''}
+
+      <div class="gauge" style="margin-top:20px">
+        <div class="ring" style="--pct:${o.pct}"><span>${o.pct}%</span></div>
+        <div>
+          <div style="font-weight:700;color:var(--blue-strong);margin-bottom:8px">Обща готовност за съответствие</div>
+          <div class="counts">
+            <div class="count yes"><b>${o.counts.yes}</b> изпълнени</div>
+            <div class="count partial"><b>${o.counts.partial}</b> частични</div>
+            <div class="count no"><b>${o.counts.no}</b> липсващи</div>
+            <div class="count na"><b>${o.counts.na}</b> неприложими</div>
+          </div>
+          ${o.answered<o.total?`<div style="font-size:12.5px;color:var(--ink-soft);margin-top:8px">${o.total-o.answered} неоценени изисквания са включени като пропуски.</div>`:''}
+        </div>
+      </div>
+
+      <h3 style="margin:26px 0 6px;color:var(--blue-strong);font-family:var(--serif)">Готовност по категории</h3>
+      ${catRows}
+
+      <h3 style="margin:26px 0 6px;color:var(--blue-strong);font-family:var(--serif)">Приоритетен план за действие</h3>
+      ${high.length||med.length ? high.map(actionHTML).join("")+med.map(actionHTML).join("")
+        : `<p class="desc" style="color:var(--yes)">Няма открити пропуски — всички приложими изисквания са изпълнени. 🎉</p>`}
+
+      ${done.length?`<h3 style="margin:26px 0 6px;color:var(--blue-strong);font-family:var(--serif)">Изпълнени изисквания (${done.length})</h3>
+        <div class="donelist">${done.map(d=>`<div class="di">${d.it.q}${d.note?` — <i style="color:var(--ink-soft)">${d.note.replace(/</g,'&lt;')}</i>`:''}</div>`).join("")}</div>`:''}
+
+      <p class="desc" style="margin-top:22px;font-size:12px">Този доклад е самооценка и няма правнообвързваща сила. Изготвен на база изискванията на Директива (ЕС) 2022/2555 (NIS 2) и Закона за киберсигурност.</p>
+    </div>`;
+}
+function renderReport(){ content.innerHTML = reportBody(); }
+
+/* ===== navigation ===== */
+function renderNav(){
+  const id = STEPS[step];
+  let html = "";
+  if(step>0) html += `<button class="btn ghost" id="back">← Назад</button>`;
+  html += `<div class="spacer"></div>`;
+  if(id==="start"){
+    const ok = !!classify();
+    html += `<button class="btn primary" id="next" ${ok?'':'disabled'}>Започни оценката →</button>`;
+  } else if(id==="report"){
+    html += `<button class="btn ghost" id="restart">Започни отначало</button>
+             <button class="btn ghost" id="download">⬇ Свали доклада</button>
+             <button class="btn primary" id="print">🖨 Отпечатай</button>`;
+  } else {
+    const last = STEPS[step+1]==="report";
+    html += `<button class="btn primary" id="next">${last?'Виж доклада →':'Напред →'}</button>`;
+  }
+  nav.innerHTML = html;
+  const back=document.getElementById("back"); if(back) back.onclick=()=>go(step-1);
+  const next=document.getElementById("next"); if(next) next.onclick=()=>go(step+1);
+  const pr=document.getElementById("print"); if(pr) pr.onclick=()=>window.print();
+  const dl=document.getElementById("download"); if(dl) dl.onclick=downloadReport;
+  const rs=document.getElementById("restart"); if(rs) rs.onclick=()=>{
+    if(confirm("Сигурни ли сте? Това ще изтрие всички отговори.")){ state={org:"",sector:"",size:"",answers:{}}; save(); go(0); }
+  };
+}
+function go(k){ step=Math.max(0,Math.min(STEPS.length-1,k)); render(); renderNav(); }
+
+function downloadReport(){
+  const css = document.querySelector("style").innerHTML;
+  const doc = `<!DOCTYPE html><html lang="bg"><head><meta charset="utf-8">
+    <title>NIS 2 GAP доклад — ${state.org||"организация"}</title><style>${css}</style></head>
+    <body><header class="head"><h1>GAP анализ · Закон за киберсигурност (NIS 2)</h1></header>
+    <div class="wrap">${reportBody()}</div></body></html>`;
+  const blob = new Blob([doc], {type:"text/html;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "NIS2-GAP-доклад-" + (state.org||"организация").replace(/[^\wа-яА-Я0-9-]+/g,"_") + ".html";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* init */
+render(); renderNav();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

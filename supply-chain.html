@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Сигурност на веригата на доставки — ръководство по NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Ръководство · чл. 21, ал. 2, буква „г“</div>
+      <h1>Сигурност на веригата на доставки</h1>
+      <p>Как да оценявате, договаряте и наблюдавате киберриска от преките си доставчици и доставчици на услуги — често най-слабото звено в защитата.</p>
+      <span class="ref">Картографиране · класификация · due diligence · договорни клаузи · SBOM · непрекъснат мониторинг</span>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="section">
+      <h2><span class="nx">§</span> Какво изисква NIS 2</h2>
+      <div class="callout law"><b>Чл. 21, ал. 2, буква „г“:</b> мерки за „сигурност на веригата на доставки, включително аспекти, свързани със сигурността, отнасящи се до отношенията между всеки субект и неговите преки доставчици или доставчици на услуги“.</div>
+      <p>Това превръща сигурността на доставчиците от еднократна проверка в <b>постоянен процес на управление</b>: трябва да оценявате, наблюдавате и управлявате киберриска по цялата си верига на стойност, с доказателства.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">→</span> Стъпки за прилагане</h2>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div>
+          <h3>Картографирайте доставчиците</h3>
+          <p>Съставете регистър на всички преки доставчици и подизпълнители с достъп до данни или системи — включително неформалните връзки. Гледайте „отвън навътре“ какво е свързано със средата ви, не разчитайте само на договорната база.</p>
+        </div></div>
+        <div class="step"><div class="sn">2</div><div>
+          <h3>Класифицирайте по риск</h3>
+          <p>Групирайте доставчиците според това до какво имат логически или физически достъп (отдалечен достъп, инженерен достъп, промяна на производствени данни) и какво въздействие биха имали при инцидент.</p>
+        </div></div>
+        <div class="step"><div class="sn">3</div><div>
+          <h3>Политика за сигурност на веригата</h3>
+          <p>Формални правила за подбор и оценка на доставчиците: критерии за избор, оценка на киберпрактиките им и на устойчивостта на предоставяните ИКТ продукти и услуги.</p>
+        </div></div>
+        <div class="step"><div class="sn">4</div><div>
+          <h3>Due diligence и оценка</h3>
+          <p>Квалифицирайте всеки доставчик — сертификати (напр. ISO 27001), история на инциденти, ниво на сигурност. Изберете мерки според уязвимостите на конкретния доставчик.</p>
+        </div></div>
+        <div class="step"><div class="sn">5</div><div>
+          <h3>Договорни клаузи</h3>
+          <p>Вградете изисквания за сигурност във всеки договор:</p>
+          <ul>
+            <li>минимални мерки за сигурност и обучение/осведоменост на персонала;</li>
+            <li>задължение за уведомяване при инциденти и пробиви;</li>
+            <li>право на одит и проверка;</li>
+            <li>изисквания към подизпълнителите по веригата.</li>
+          </ul>
+        </div></div>
+        <div class="step"><div class="sn">6</div><div>
+          <h3>SBOM и прозрачност на софтуера</h3>
+          <p>Поддържайте списък на софтуерните компоненти и техните доставчици (Software Bill of Materials), за да реагирате бързо при нови уязвимости.</p>
+        </div></div>
+        <div class="step"><div class="sn">7</div><div>
+          <h3>Непрекъснат мониторинг</h3>
+          <p>NIS 2 очаква постоянна, основана на доказателства видимост към риска от доставчиците — не само периодични оценки. Наблюдавайте и реагирайте на промени в риска.</p>
+        </div></div>
+        <div class="step"><div class="sn">8</div><div>
+          <h3>Управление и отговорност</h3>
+          <p>Включете отделите „Доставки“ и „Правен“ в оценката на ИКТ риска; вградете киберсигурността във всяко споразумение и докладвайте на ръководството.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="section" style="margin:0">
+        <h2><span class="nx">✓</span> Контролен списък</h2>
+        <ul class="checklist">
+          <li>Актуален регистър на доставчиците и подизпълнителите</li>
+          <li>Класификация по критичност и достъп</li>
+          <li>Политика за сигурност на веригата на доставки</li>
+          <li>Процес за due diligence преди наемане</li>
+          <li>Стандартни договорни клаузи за киберсигурност</li>
+          <li>Право на одит и уведомяване при инциденти</li>
+          <li>SBOM за ключовия софтуер</li>
+          <li>Непрекъснат мониторинг и периодичен преглед</li>
+        </ul>
+      </div>
+      <div class="section" style="margin:0">
+        <h2><span class="nx">🗎</span> Доказателства за одит</h2>
+        <ul>
+          <li>Регистър на доставчиците с нива на риск;</li>
+          <li>Въпросници/оценки и сертификати на доставчици;</li>
+          <li>Договори с клаузи за сигурност и одит;</li>
+          <li>Записи от мониторинг и преразглеждания;</li>
+          <li>SBOM и реакция при уязвимости в компоненти.</li>
+        </ul>
+        <p><span class="pill">Свързан инструмент</span> <a href="supplier-register.html"><b>Регистър на доставчиците</b></a> · <a href="risk-matrix.html">Анализ на риска</a> · <a href="gap-analysis.html">GAP анализ</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">↗</span> Източници</h2>
+      <p class="sources">
+        <a href="https://www.dlapiper.com/en-us/insights/publications/2025/12/nis2-directive-explained-part-3-supply-chain-security" target="_blank" rel="noopener">DLA Piper — Supply chain security</a> ·
+        <a href="https://www.bitsight.com/blog/navigating-nis2-requirements-transforming-supply-chain-security" target="_blank" rel="noopener">Bitsight — NIS2 supply chain</a> ·
+        <a href="https://www.cybertrust365.com/en/supply-chain-security-nis2/" target="_blank" rel="noopener">Supply chain security & NIS2</a> ·
+        <a href="https://www.thingsrecon.com/blog/nis2-and-supply-chain-security-what-actual-compliance-looks-like" target="_blank" rel="noopener">What actual compliance looks like</a>.
+      </p>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Ръководство · Сигурност на веригата на доставки (NIS 2, чл. 21) · Информативно, без правнообвързваща сила</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

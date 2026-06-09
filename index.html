@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Закон за киберсигурност (NIS 2) — портал</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .cards3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:840px){ .cards3{ grid-template-columns:1fr; } }
+  .tile{ display:block; text-decoration:none; background:var(--panel); border-radius:14px; box-shadow:var(--shadow);
+    padding:22px 22px; border-top:4px solid var(--blue); transition:transform .15s, box-shadow .15s; color:var(--ink); }
+  .tile:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+  .tile.tool{ border-top-color:var(--yes); }
+  .tile.isms{ border-top-color:var(--blue-strong); }
+  .tile.cross{ border-top-color:#6b3fb0; }
+  .tile.ai{ border-top-color:#0a8a8a; }
+  .tile .ic{ font-size:26px; }
+  .tile h3{ margin:8px 0 5px; color:var(--blue-strong); font-size:18px; }
+  .tile p{ margin:0; color:var(--ink-soft); font-size:13.5px; }
+  .group-title{ font-family:var(--serif); color:var(--blue-strong); font-size:20px; margin:30px 0 14px; }
+  .group-title:first-of-type{ margin-top:6px; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">NIS 2 · Директива (ЕС) 2022/2555 · ДВ бр. 17/2026</div>
+      <h1>Портал за съответствие със Закона за киберсигурност</h1>
+      <p>Разберете промените, оценете готовността си и приложете изискванията на NIS 2 с практически инструменти — на едно място.</p>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="group-title">Запознаване със закона</div>
+    <div class="cards3">
+      <a class="tile" href="overview.html"><div class="ic">📋</div><h3>Преглед на промените</h3><p>Какво въвежда реформата с NIS 2 — структура, обхват, санкции.</p></a>
+      <a class="tile" href="comparison.html"><div class="ic">🔍</div><h3>Сравнение на текста</h3><p>Стара срещу нова редакция, текст по текст, с подчертани промени.</p></a>
+      <a class="tile" href="training.html"><div class="ic">🎬</div><h3>Модули (презентация)</h3><p>Петте модула на NIS 2 като слайдове за представяне.</p></a>
+    </div>
+
+    <div class="group-title">Оценка и съответствие</div>
+    <div class="cards3">
+      <a class="tile" href="gap-analysis.html"><div class="ic">✅</div><h3>GAP анализ</h3><p>Самооценка по изискванията на NIS 2 с доклад и план за действие.</p></a>
+      <a class="tile isms" href="isms.html"><div class="ic">📚</div><h3>СУИС (ISMS)</h3><p>Система за управление на сигурността — политики и процедури по NIS 2 и ISO 27001.</p></a>
+      <a class="tile cross" href="crosswalk.html"><div class="ic">🧭</div><h3>Crosswalk ISO 27001 ↔ NIS 2</h3><p>Съпоставяне на контролите с указания за прилагане и документи.</p></a>
+    </div>
+
+    <div class="group-title">Инструменти за прилагане</div>
+    <div class="cards3">
+      <a class="tile tool" href="risk-matrix.html"><div class="ic">📊</div><h3>Анализ на риска</h3><p>Регистър и матрица на риска с готова библиотека от рискове.</p></a>
+      <a class="tile tool" href="incident-report.html"><div class="ic">🚨</div><h3>Управление на инциденти</h3><p>Генератор на доклад за инцидент по NIS 2 (24 ч / 72 ч / 1 месец).</p></a>
+      <a class="tile tool" href="continuity.html"><div class="ic">🔄</div><h3>Непрекъсваемост на дейността</h3><p>Ръководство за BCP/DRP по NIS 2.</p></a>
+      <a class="tile tool" href="supply-chain.html"><div class="ic">🔗</div><h3>Сигурност на веригата</h3><p>Ръководство за управление на риска при доставчици.</p></a>
+      <a class="tile tool" href="supplier-register.html"><div class="ic">🏭</div><h3>Регистър на доставчиците</h3><p>Списък на доставчиците с критичност, достъп и договорни клаузи.</p></a>
+      <a class="tile tool" href="access-crypto.html"><div class="ic">🔐</div><h3>Достъп и криптография</h3><p>Ръководство за контрол на достъпа, MFA и криптиране.</p></a>
+      <a class="tile tool" href="cyber-hygiene.html"><div class="ic">🎓</div><h3>Киберхигиена и обучение</h3><p>Как да изградите програма за обучение и фишинг симулации.</p></a>
+      <a class="tile tool" href="improvement.html"><div class="ic">📈</div><h3>Непрекъснато подобрение</h3><p>Тримесечен график на дейностите за поддържане на съответствие.</p></a>
+    </div>
+
+    <div class="group-title">Изкуствен интелект</div>
+    <div class="cards3">
+      <a class="tile ai" href="nis2-ai.html"><div class="ic">🤖</div><h3>NIS 2 и изкуственият интелект</h3><p>Матрица с предизвикателствата на AI и пътна карта.</p></a>
+      <a class="tile ai" href="ai-inventory.html"><div class="ic">🧾</div><h3>AI-BOM — инвентар на ИИ</h3><p>Регистър на AI системите, вградените функции и shadow AI.</p></a>
+      <a class="tile ai" href="nhi-register.html"><div class="ic">🪪</div><h3>Регистър на NHI</h3><p>Нечовешки и агентни идентичности — собственици и права.</p></a>
+      <a class="tile ai" href="ai-training.html"><div class="ic">🎭</div><h3>Обучение: deepfakes и AI</h3><p>Разпознаване на deepfakes и безопасно ползване на AI.</p></a>
+      <a class="tile ai" href="document.html?doc=ai-use-policy"><div class="ic">📄</div><h3>Политика за ползване на AI</h3><p>Правила и списък с одобрени AI инструменти.</p></a>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Портал за съответствие · Закон за киберсигурност (NIS 2) · Подготвено за вътрешно ползване и презентация</footer>
+  <script src="nis2.js" defer></script>
+</body>
+</html>

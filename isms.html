@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>СУИС (ISMS) — Система за управление на информационната сигурност</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .pyramid{ display:flex; flex-direction:column; gap:8px; align-items:center; margin:6px auto 4px; }
+  .tier{ border-radius:10px; padding:11px 16px; text-align:center; font-size:13.5px; color:#fff; }
+  .tier b{ display:block; font-size:14.5px; }
+  .t1{ width:46%; background:var(--blue-strong); } .t2{ width:64%; background:var(--blue); }
+  .t3{ width:82%; background:#3f7cb8; } .t4{ width:100%; background:#6a9bcb; }
+  @media (max-width:680px){ .tier{ width:100%!important; } }
+
+  .catblock{ margin-top:18px; }
+  .catblock h3{ font-family:var(--serif); color:var(--blue-strong); font-size:18px; margin:0 0 10px; padding-bottom:6px; border-bottom:2px solid var(--blue-soft); }
+  .doclist{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  @media (max-width:760px){ .doclist{ grid-template-columns:1fr; } }
+  .doccard{ display:block; text-decoration:none; background:#fff; border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:10px; padding:13px 15px; color:var(--ink); transition:transform .12s, box-shadow .12s; }
+  .doccard:hover{ transform:translateY(-2px); box-shadow:var(--shadow); }
+  .doccard .code{ font-size:11px; font-weight:700; color:var(--ink-soft); letter-spacing:.04em; }
+  .doccard h4{ margin:3px 0 6px; color:var(--blue-strong); font-size:15px; }
+  .doccard .refs{ font-size:11px; color:var(--ink-soft); }
+  .doccard .refs .n{ color:var(--blue); font-weight:600; } .doccard .refs .i{ color:#6b3fb0; font-weight:600; }
+  .toolrow{ display:flex; flex-wrap:wrap; gap:10px; }
+  .toolrow a{ text-decoration:none; font-size:13.5px; font-weight:600; color:var(--blue); background:var(--blue-soft); padding:9px 15px; border-radius:999px; }
+  .toolrow a:hover{ background:#dceaf6; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="isms.html">📚 СУИС (ISMS) — документи</a>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="supplier-register.html">🏭 Регистър на доставчиците</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+          <a href="crosswalk.html">🧭 ISO 27001 ↔ NIS 2</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap wide">
+      <div class="eyebrow">Устав на СУИС · NIS 2 + ISO/IEC 27001:2022</div>
+      <h1>Система за управление на информационната сигурност</h1>
+      <p>Това е централният документ (ISMS Manual), който обединява политиките, процедурите и записите за информационна сигурност на организацията. Всеки документ е подравнен с изискванията на NIS 2 и контролите на ISO/IEC 27001:2022 и е достъпен оттук.</p>
+      <span class="ref">Цикъл „планирай – изпълни – провери – действай“ (PDCA) · единна рамка от документи</span>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="section">
+      <h2><span class="nx">①</span> За СУИС</h2>
+      <p class="lead">Системата за управление на информационната сигурност (СУИС / ISMS) е рамка от политики, процедури и контроли, чрез които организацията управлява риска за информацията си. Тя е изградена около цикъла PDCA и съчетава задълженията по <b>NIS 2</b> с управленския модел на <b>ISO/IEC 27001:2022</b>.</p>
+      <h3>Йерархия на документите</h3>
+      <div class="pyramid">
+        <div class="tier t1"><b>Политика за ИС</b>Ниво 1 · ангажимент на ръководството</div>
+        <div class="tier t2"><b>Политики по области</b>Ниво 2 · достъп, криптография, доставчици…</div>
+        <div class="tier t3"><b>Процедури и планове</b>Ниво 3 · инциденти, непрекъсваемост, уязвимости…</div>
+        <div class="tier t4"><b>Записи и регистри</b>Ниво 4 · риск, доставчици, инциденти, одити</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">②</span> Регистър на документите</h2>
+      <p class="lead">Натиснете документ, за да го отворите. Всеки е шаблон, подравнен с NIS 2 и ISO 27001:2022 — адаптирайте го към организацията си.</p>
+      <div id="catalog"></div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">③</span> Записи, регистри и инструменти</h2>
+      <p class="lead">Оперативните записи се поддържат чрез интерактивните инструменти:</p>
+      <div class="toolrow">
+        <a href="risk-matrix.html">📊 Регистър на риска</a>
+        <a href="supplier-register.html">🏭 Регистър на доставчиците</a>
+        <a href="incident-report.html">🚨 Доклади за инциденти</a>
+        <a href="gap-analysis.html">✅ GAP анализ</a>
+        <a href="crosswalk.html">🧭 ISO 27001 ↔ NIS 2</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">④</span> Контрол на документите</h2>
+      <ul>
+        <li>Всеки документ има собственик, версия и дата на преглед.</li>
+        <li>Политиките се преразглеждат поне веднъж годишно и при значителни промени.</li>
+        <li>Промените се одобряват по процедурата за управление на промените и се протоколират.</li>
+        <li>Приложимите контроли се отразяват в <a href="document.html?doc=soa">Декларацията за приложимост (SoA)</a>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="sitefoot">СУИС (ISMS) · подравнена с NIS 2 (Директива (ЕС) 2022/2555) и ISO/IEC 27001:2022 · шаблони без правнообвързваща сила</footer>
+
+<script src="docs-data.js"></script>
+<script>
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const cat = document.getElementById("catalog");
+cat.innerHTML = DOC_CATS.map(c=>{
+  const cards = c.ids.map(id=>{ const d=DOCS[id]; if(!d) return "";
+    const nis=(d.nis2||[]).slice(0,2).join(", "); const iso=(d.iso||[]).slice(0,3).join(", ");
+    return `<a class="doccard" href="document.html?doc=${id}">
+      <div class="code">${esc(d.code)}</div>
+      <h4>${esc(d.title)}</h4>
+      <div class="refs"><span class="n">${esc(nis)}</span> · <span class="i">ISO ${esc(iso)}</span></div>
+    </a>`;
+  }).join("");
+  return `<div class="catblock"><h3>${esc(c.title)}</h3><div class="doclist">${cards}</div></div>`;
+}).join("");
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

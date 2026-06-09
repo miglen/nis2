@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NIS 2 и изкуственият интелект — предизвикателства</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px; }
+  .controls input{ flex:1; min-width:220px; border:1px solid var(--blue-line); border-radius:999px; padding:10px 16px; font-size:14px; font-family:inherit; }
+  .count{ font-size:12.5px; color:var(--ink-soft); }
+
+  table.mx{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.mx th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#fff; background:var(--blue-strong); padding:10px 10px; position:sticky; top:0; z-index:2; }
+  table.mx td{ padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.mx tr:nth-child(even) td{ background:#fafcff; }
+  table.mx tr:hover td{ background:var(--blue-soft); }
+  .area{ font-weight:700; color:var(--blue-strong); }
+  .area .ref{ display:block; font-weight:400; color:var(--blue); font-size:11.5px; margin-top:2px; }
+  .chal{ font-weight:600; color:#6b3fb0; font-size:12.5px; }
+  .ex{ color:var(--ink); } .rk{ color:var(--no); }
+  .rec{ color:var(--ink); }
+  .rec .lnk{ display:inline-block; margin-top:6px; }
+  .rec .lnk a{ display:inline-block; background:var(--blue-soft); color:var(--blue-strong); text-decoration:none; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; margin:2px 4px 0 0; }
+  .rec .lnk a:hover{ background:#dceaf6; }
+  col.m1{width:15%} col.m2{width:16%} col.m3{width:24%} col.m4{width:21%} col.m5{width:24%}
+
+  .horizon{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:880px){ .horizon{ grid-template-columns:1fr; } table.mx col{ width:auto; } }
+  .hcard{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; border-top:4px solid var(--blue); }
+  .hcard.quick{ border-top-color:var(--yes); } .hcard.mid{ border-top-color:var(--partial); } .hcard.strat{ border-top-color:#6b3fb0; }
+  .hcard h3{ margin:0 0 4px; color:var(--blue-strong); font-size:16px; }
+  .hcard .tag{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); }
+  .hcard ul{ margin:10px 0 0; padding-left:18px; font-size:13.5px; } .hcard li{ margin-bottom:6px; }
+  @media (max-width:760px){ table.mx, table.mx thead, table.mx tbody, table.mx th, table.mx td, table.mx tr{ display:block; } table.mx thead{ display:none; } table.mx tr{ border:1px solid var(--line); border-radius:10px; margin-bottom:12px; padding:6px; } table.mx td{ border:0; padding:6px 8px; } table.mx td::before{ content:attr(data-h); display:block; font-size:10.5px; text-transform:uppercase; color:var(--blue); font-weight:700; margin-bottom:3px; } }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="isms.html">📚 СУИС (ISMS) — документи</a>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="supplier-register.html">🏭 Регистър на доставчиците</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+          <a href="crosswalk.html">🧭 ISO 27001 ↔ NIS 2</a>
+          <a href="nis2-ai.html">🤖 NIS 2 и изкуственият интелект</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap wide">
+      <div class="eyebrow">Анализ · NIS 2 в епохата на изкуствения интелект</div>
+      <h1>NIS 2 и изкуственият интелект</h1>
+      <p>Изкуственият интелект едновременно разширява повърхността за атака и сам става инструмент за атака. NIS 2 е технологично неутрален и с подход „всички опасности“ — затова рисковете от AI вече попадат в обхвата му. Тази матрица съпоставя реалните предизвикателства на AI с изискванията на NIS 2 и показва къде да действаме.</p>
+      <span class="ref">Агентни идентичности · Shadow AI · prompt injection · deepfakes · AI верига на доставки</span>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="callout law noprint"><b>Регулаторно сближаване:</b> предизвикателствата на AI се управляват най-добре чрез единна рамка, която съчетава <b>NIS 2</b> (киберсигурност), <b>Регламента за ИИ (EU AI Act)</b>, <b>ISO/IEC 42001</b> (система за управление на ИИ), <b>NIST AI RMF</b> и <b>OWASP Top 10 за LLM</b>. СУИС-ът ви е естественото място да ги обедините.</div>
+
+    <div class="controls noprint">
+      <input type="text" id="search" placeholder="🔎 Търсене (напр. идентичност, агент, доставчици, deepfake, prompt injection)...">
+      <span class="count" id="count"></span>
+      <button class="btn ghost" id="btnPrint">🖨 Отпечатай</button>
+    </div>
+
+    <div class="section" style="padding:0;overflow:hidden">
+    <table class="mx">
+      <colgroup><col class="m1"><col class="m2"><col class="m3"><col class="m4"><col class="m5"></colgroup>
+      <thead><tr>
+        <th>Област (NIS 2)</th><th>Предизвикателство с AI</th><th>Пример</th><th>Риск / какво означава</th><th>Препоръка · къде помагаме</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    </div>
+
+    <h2 class="sec" style="font-family:var(--serif);color:var(--blue-strong);text-align:center;font-size:26px;margin:34px 0 6px">Къде да действаме</h2>
+    <p style="text-align:center;color:var(--ink-soft);max-width:70ch;margin:0 auto 22px">Пътна карта по хоризонти — от бързи победи до стратегически инициативи. Свържете всяка стъпка с инструментите и документите на СУИС.</p>
+    <div class="horizon">
+      <div class="hcard quick">
+        <div class="tag">0–3 месеца</div><h3>Бързи победи</h3>
+        <ul>
+          <li><a href="document.html?doc=ai-use-policy">Политика за ползване на AI</a> и списък с одобрени инструменти.</li>
+          <li><a href="ai-inventory.html">Инвентар на AI (AI-BOM)</a> — вградени функции и shadow AI.</li>
+          <li><a href="ai-training.html">Обучение за deepfakes и безопасно ползване на AI</a>.</li>
+          <li><a href="risk-matrix.html">Разширяване на регистъра на риска</a> с AI рискове (OWASP LLM Top 10).</li>
+        </ul>
+      </div>
+      <div class="hcard mid">
+        <div class="tag">3–9 месеца</div><h3>Средносрочни</h3>
+        <ul>
+          <li><a href="nhi-register.html">Регистър на нечовешките и агентните идентичности (NHI)</a> и собственици.</li>
+          <li>Оценка на AI при доставчиците и договорни клаузи за AI.</li>
+          <li>DLP и контрол на данните, подавани към AI инструменти.</li>
+          <li>Журналиране и наблюдение на действията на AI агентите.</li>
+        </ul>
+      </div>
+      <div class="hcard strat">
+        <div class="tag">9–18 месеца</div><h3>Стратегически</h3>
+        <ul>
+          <li>Единно управление: NIS 2 + Регламент за ИИ + ISO/IEC 42001 под СУИС.</li>
+          <li>Архитектура за оторизация на агенти (най-малки права, одобрени инструменти, human-in-the-loop).</li>
+          <li>Частни/управлявани модели за чувствителни данни.</li>
+          <li>Сигурен SDLC за AI и непрекъснат мониторинг на модели.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:22px">Свързани ресурси: <a href="risk-matrix.html">Анализ на риска</a> · <a href="supplier-register.html">Регистър на доставчиците</a> · <a href="access-crypto.html">Достъп и криптография</a> · <a href="cyber-hygiene.html">Киберхигиена и обучение</a> · <a href="isms.html">СУИС (документи)</a> · <a href="gap-analysis.html">GAP анализ</a>.</div>
+
+    <p class="sources" style="margin-top:16px">
+      Източници:
+      <a href="https://thehackernews.com/expert-insights/2026/05/the-non-human-identity-crisis-why-your.html" target="_blank" rel="noopener">The Non-Human Identity Crisis</a> ·
+      <a href="https://www.iansresearch.com/resources/all-blogs/post/security-blog/2026/02/24/ai-agents-are-creating-an-identity-security-crisis-in-2026" target="_blank" rel="noopener">AI Agents & Identity Security 2026</a> ·
+      <a href="https://ttms.com/shadow-ai-iso-42001-ai-act-governing-ai-the-right-way/" target="_blank" rel="noopener">Shadow AI, ISO 42001 & AI Act</a> ·
+      <a href="https://www.kiteworks.com/regulatory-compliance/nis2-dora-eu-ai-compliance/" target="_blank" rel="noopener">NIS2, DORA & EU AI Act</a> ·
+      <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener">OWASP Top 10 for LLM</a>.
+    </p>
+  </div>
+
+  <footer class="sitefoot">NIS 2 и изкуственият интелект · анализ и матрица · информативно, без правнообвързваща сила</footer>
+
+<script>
+const ROWS = [
+  { area:"Управление на идентичности", ref:"Чл. 21(2)(и),(й)",
+    chal:"Агентни и нечовешки идентичности (NHI)",
+    ex:"AI агент/копилот със собствен service account и API ключове, който действа автономно, извиква API и поражда под-агенти.",
+    rk:"NHI растат лавинообразно (до 45:1 спрямо хората); MFA не важи за агенти; осиротелите агенти с прекомерни права са „бомба със закъснител“.",
+    rec:"Регистър и управление на нечовешките идентичности; обхватни (scoped) и краткотрайни токени; собственик на всеки агент; одит и навременно изтегляне на правата.",
+    links:[["Достъп и криптография","access-crypto.html"],["Анализ на риска","risk-matrix.html"]] },
+
+  { area:"Контрол на достъпа за агенти", ref:"Чл. 21(2)(и),(й)",
+    chal:"Оторизация на автономни агенти и инструменти (tool use)",
+    ex:"Агент с широк OAuth обхват, който може да чете и изпраща поща и да изпълнява код от името на потребител.",
+    rk:"Прекомерни права и динамично придобиване на разрешения по време на изпълнение; ескалация и странични ефекти.",
+    rec:"Принцип на най-малки права за агенти; само одобрени инструменти и ограничени обхвати; одобрение от човек (human-in-the-loop) за чувствителни действия.",
+    links:[["Достъп и криптография","access-crypto.html"]] },
+
+  { area:"Верига на доставки", ref:"Чл. 21(2)(г)",
+    chal:"AI верига на доставки и Shadow AI",
+    ex:"Служители поставят изходен код или данни в публични AI инструменти през лични акаунти; доставчик вгражда AI функция с неизвестен модел и обучаващи данни.",
+    rk:"Изтичане на поверителни данни и интелектуална собственост; неизвестен произход на модели и данни; средно ~$670k допълнителни разходи при shadow AI инциденти.",
+    rec:"Политика за ползване на AI и одобрени инструменти; DLP; оценка на AI при доставчиците и договорни клаузи; AI-BOM (инвентар на моделите).",
+    links:[["Регистър на доставчиците","supplier-register.html"],["Верига на доставки","supply-chain.html"]] },
+
+  { area:"Управление на риска", ref:"Чл. 21(2)(а)",
+    chal:"Нови, AI-специфични вектори на риск",
+    ex:"Prompt injection, отравяне на модела/обучаващите данни, халюцинации, кражба на модел, adversarial входове.",
+    rk:"Класическата оценка на риска не покрива тези заплахи; решения на база грешен AI изход.",
+    rec:"Разширете регистъра на риска с AI рискове (OWASP LLM Top 10); подравнете с ISO/IEC 42001 и NIST AI RMF.",
+    links:[["Анализ на риска","risk-matrix.html"]] },
+
+  { area:"Сигурна разработка", ref:"Чл. 21(2)(д)",
+    chal:"Код, генериран от AI",
+    ex:"Копилот предлага уязвим код или несигурни/лицензно проблемни зависимости; бързо „vibe coding“ без преглед.",
+    rk:"Уязвимости и правни проблеми, въведени масово и бързо в продукцията.",
+    rec:"Задължителен преглед на AI-генериран код; SAST/SCA; правила за ползване на AI в SDLC; обучение на разработчиците.",
+    links:[["Документ: Сигурна разработка","document.html?doc=secure-dev"]] },
+
+  { area:"Управление на инциденти и докладване", ref:"Чл. 21(2)(б) · Чл. 23",
+    chal:"AI-усилени атаки и deepfakes",
+    ex:"Дийпфейк глас/видео на ръководител, нареждащ спешен превод; AI-генериран фишинг в мащаб; автоматизирани атаки.",
+    rk:"По-убедителни и по-бързи атаки; по-трудно откриване; неяснота дали AI инцидент е „значим“ за докладване.",
+    rec:"Процедури за верификация по втори канал (out-of-band); сценарии с AI/deepfake в плана за инциденти; ясни критерии и срокове за докладване.",
+    links:[["Управление на инциденти","incident-report.html"],["Документ: План за инциденти","document.html?doc=incident-response"]] },
+
+  { area:"Криптография и данни", ref:"Чл. 21(2)(з),(и)",
+    chal:"Данни, подавани към AI; поверителност на обучаващите данни",
+    ex:"Чувствителни данни в промптове или фина настройка; model inversion/membership inference; обработка извън ЕС.",
+    rk:"Изтичане на данни през самия модел; проблеми с местоположението и резидентността на данните.",
+    rec:"Класификация и минимизиране на данните за AI; забрана за чувствителни данни в публични модели; частни/локални модели; криптиране.",
+    links:[["Документ: Криптография","document.html?doc=crypto"]] },
+
+  { area:"Логване и наблюдение", ref:"Чл. 21(2)(а)",
+    chal:"Проследимост и отчетност на автономни агенти",
+    ex:"Агент извършва верига от действия без ясен журнал кой го е стартирал, с какви права и защо.",
+    rk:"Липса на отчетност и невъзможност за разследване и приписване на действия.",
+    rec:"Журналиране на действията на агентите, обвързано с идентичност; централизиран мониторинг и аларми.",
+    links:[["Документ: Логване и мониторинг","document.html?doc=logging"]] },
+
+  { area:"Киберхигиена и обучение", ref:"Чл. 21(2)(ж)",
+    chal:"Готовност на хората за AI заплахи",
+    ex:"Служители не разпознават deepfake или AI фишинг; неправилно или прекомерно споделяне с AI инструменти.",
+    rk:"Човешкият фактор се усилва от AI — атаките стават по-евтини и по-правдоподобни.",
+    rec:"Включете безопасното ползване на AI и разпознаването на deepfakes в програмата за обучение и фишинг симулациите.",
+    links:[["Киберхигиена и обучение","cyber-hygiene.html"]] },
+
+  { area:"Управление и отговорност", ref:"Чл. 20",
+    chal:"Управление на AI на ниво ръководство и регулаторно припокриване",
+    ex:"Кой одобрява и носи отговорност за AI агентите? Припокриване на NIS 2, Регламента за ИИ и ISO/IEC 42001.",
+    rk:"Празнини в отговорността и двойно/тройно регулиране без единна рамка.",
+    rec:"Поставете управлението на AI под СУИС; политика и роли за AI; обучение на ръководството; единна рамка NIS 2 + AI Act + ISO 42001.",
+    links:[["СУИС (документи)","isms.html"],["GAP анализ","gap-analysis.html"]] }
+];
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const tb=document.getElementById("rows");
+function render(q){
+  q=(q||"").toLowerCase().trim(); let shown=0;
+  tb.innerHTML = ROWS.map(r=>{
+    const hay=(r.area+" "+r.ref+" "+r.chal+" "+r.ex+" "+r.rk+" "+r.rec).toLowerCase();
+    if(q && !hay.includes(q)) return ""; shown++;
+    const links=(r.links||[]).map(l=>`<a href="${l[1]}">${esc(l[0])}</a>`).join("");
+    return `<tr>
+      <td data-h="Област"><span class="area">${esc(r.area)}<span class="ref">${esc(r.ref)}</span></span></td>
+      <td data-h="Предизвикателство"><span class="chal">${esc(r.chal)}</span></td>
+      <td data-h="Пример"><span class="ex">${esc(r.ex)}</span></td>
+      <td data-h="Риск"><span class="rk">${esc(r.rk)}</span></td>
+      <td data-h="Препоръка"><span class="rec">${esc(r.rec)}<span class="lnk">${links}</span></span></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("count").textContent = shown+" от "+ROWS.length+" реда";
+}
+document.getElementById("search").addEventListener("input",e=>render(e.target.value));
+document.getElementById("btnPrint").onclick=()=>window.print();
+render("");
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

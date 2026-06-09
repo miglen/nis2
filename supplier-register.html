@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Регистър на доставчиците — NIS 2</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  .toolbar2{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .toolbar2 .spacer{ flex:1; }
+  .stat{ display:inline-flex; align-items:baseline; gap:6px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 13px; font-size:13px; color:var(--ink-soft); }
+  .stat b{ font-size:18px; font-family:var(--serif); color:var(--blue-strong); }
+  .stat.crit b{ color:var(--no);} .stat.ok b{ color:var(--yes);} .stat.warn b{ color:var(--partial);}
+
+  table.reg{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.reg th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#fff; background:var(--blue-strong); padding:9px 8px; position:sticky; top:0; z-index:2; }
+  table.reg td{ padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.reg tr:hover td{ background:#fafcff; }
+  table.reg input[type=text], table.reg select, table.reg input[type=date]{ width:100%; border:1px solid var(--line); border-radius:7px; padding:6px 7px; font-family:inherit; font-size:12.5px; color:var(--ink); background:#fff; }
+  table.reg .sub{ width:100%; border:1px solid transparent; border-radius:6px; padding:3px 6px; font-size:11.5px; color:var(--ink-soft); font-family:inherit; }
+  table.reg .sub:focus{ border-color:var(--line); background:#fff; }
+  .crit-sel.c-crit{ color:var(--no); font-weight:700; } .crit-sel.c-high{ color:#c2691a; font-weight:700; }
+  .crit-sel.c-med{ color:var(--partial); font-weight:700; } .crit-sel.c-low{ color:var(--yes); font-weight:700; }
+  .clauses{ display:flex; gap:9px; }
+  .clauses label{ display:inline-flex; flex-direction:column; align-items:center; font-size:9.5px; color:var(--ink-soft); gap:2px; cursor:pointer; }
+  .clauses input{ accent-color:var(--blue); width:15px; height:15px; }
+  .overdue{ color:var(--no); font-weight:700; font-size:10.5px; }
+  .ok-rev{ color:var(--yes); font-size:10.5px; }
+  .del{ border:0; background:none; color:var(--no); cursor:pointer; font-size:15px; padding:4px; }
+  .addrow{ display:grid; grid-template-columns:1.5fr 1.5fr 1fr 1.2fr auto; gap:10px; align-items:end; }
+  @media (max-width:760px){ .addrow{ grid-template-columns:1fr 1fr; } }
+  .fld label{ display:block; font-size:12px; font-weight:600; color:var(--blue-strong); margin-bottom:4px; }
+  .fld input, .fld select{ width:100%; border:1px solid var(--blue-line); border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13.5px; }
+  .legend2{ display:flex; flex-wrap:wrap; gap:12px; font-size:12px; color:var(--ink-soft); margin-bottom:10px; }
+</style>
+</head>
+<body class="page">
+  <header class="sitebar">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav">
+      <a href="overview.html">Преглед</a>
+      <a href="comparison.html">Сравнение</a>
+      <a href="training.html">Модули</a>
+      <a href="gap-analysis.html">GAP анализ</a>
+      <div class="site-dd">
+        <button class="site-ddbtn" type="button">Инструменти ▾</button>
+        <div class="site-ddmenu">
+          <div class="ddhead">Инструменти по NIS 2</div>
+          <a href="risk-matrix.html">📊 Анализ на риска</a>
+          <a href="incident-report.html">🚨 Управление на инциденти</a>
+          <a href="continuity.html">🔄 Непрекъсваемост на дейността</a>
+          <a href="supply-chain.html">🔗 Сигурност на веригата</a>
+          <a href="supplier-register.html">🏭 Регистър на доставчиците</a>
+          <a href="access-crypto.html">🔐 Достъп и криптография</a>
+          <a href="cyber-hygiene.html">🎓 Киберхигиена и обучение</a>
+          <a href="improvement.html">📈 Непрекъснато подобрение</a>
+          <a href="crosswalk.html">🧭 ISO 27001 ↔ NIS 2</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="wrap wide">
+      <div class="eyebrow">Инструмент · чл. 21, ал. 2, буква „г“</div>
+      <h1>Регистър на доставчиците</h1>
+      <p>Картографирайте преките си доставчици и доставчици на услуги, оценете критичността и достъпа им и проследявайте договорните клаузи за сигурност и сроковете за преоценка — в основата на изискването за сигурност на веригата на доставки.</p>
+      <span class="ref">Заредени са примерни доставчици · данните се пазят в браузъра · CSV/печат</span>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="callout noprint">Този регистър е практическото допълнение към ръководството
+      <a href="supply-chain.html"><b>Сигурност на веригата на доставки →</b></a>. Там ще намерите как да оценявате доставчиците и какви клаузи да договаряте.</div>
+
+    <div class="toolbar2 noprint">
+      <span class="stat">Доставчици <b id="cTotal">0</b></span>
+      <span class="stat crit">Критични/високи <b id="cCrit">0</b></span>
+      <span class="stat ok">С клауза за уведомяване <b id="cIncident">0%</b></span>
+      <span class="stat ok">С право на одит <b id="cAudit">0%</b></span>
+      <span class="stat warn">Просрочена оценка <b id="cOverdue">0</b></span>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="btnReset">↺ Примерни данни</button>
+      <button class="btn ghost" id="btnCSV">⬇ CSV</button>
+      <button class="btn primary" id="btnPrint">🖨 Отпечатай</button>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">＋</span> Добавяне на доставчик</h2>
+      <div class="addrow">
+        <div class="fld"><label>Доставчик</label><input type="text" id="nName" placeholder="Име на доставчика"></div>
+        <div class="fld"><label>Услуга / продукт</label><input type="text" id="nService" placeholder="напр. Облачен хостинг"></div>
+        <div class="fld"><label>Критичност</label><select id="nCrit"><option>Критичен</option><option>Висок</option><option selected>Среден</option><option>Нисък</option></select></div>
+        <div class="fld"><label>Ниво на достъп</label><select id="nAccess"></select></div>
+        <div class="fld"><button class="btn primary" id="btnAdd">Добави</button></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="nx">☰</span> Регистър</h2>
+      <div class="legend2">Договорни клаузи: <b>Увед.</b> = уведомяване при инцидент · <b>Одит</b> = право на одит · <b>Мин.сиг.</b> = минимални изисквания за сигурност. Просрочена оценка = последната оценка е преди повече от 12 месеца или липсва.</div>
+      <div style="overflow-x:auto">
+      <table class="reg">
+        <thead><tr>
+          <th style="min-width:200px">Доставчик / услуга</th>
+          <th>Критичност</th>
+          <th>Ниво на достъп</th>
+          <th>Сертификат</th>
+          <th style="min-width:140px">Договорни клаузи</th>
+          <th>Посл. оценка</th>
+          <th>Статус</th>
+          <th>Отговорник</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="sitefoot">Регистър на доставчиците · NIS 2 чл. 21, ал. 2, буква „г“ · Самооценка без правнообвързваща сила</footer>
+
+<script>
+const ACCESS = ["Без достъп","Само данни","Отдалечен достъп","Инженерен/админ достъп","Производствени системи","Физически (ЦОД)"];
+const CRITS = ["Критичен","Висок","Среден","Нисък"];
+const STATUS = ["Активен","В преглед","Прекратен"];
+
+function critClass(c){ return {"Критичен":"c-crit","Висок":"c-high","Среден":"c-med","Нисък":"c-low"}[c]||""; }
+
+const SAMPLE = [
+  { name:"CloudHost ЕООД", service:"Облачен хостинг (IaaS)", crit:"Критичен", access:"Производствени системи", cert:"ISO/IEC 27001", inc:true, aud:true, sec:true, rev:"2026-03-15", status:"Активен", owner:"ИТ дирекция" },
+  { name:"NetOps MSP", service:"Управление на ИТ инфраструктура", crit:"Критичен", access:"Инженерен/админ достъп", cert:"ISO/IEC 27001", inc:true, aud:true, sec:true, rev:"2026-02-01", status:"Активен", owner:"ИТ дирекция" },
+  { name:"DataCenter BG", service:"Колокация / ЦОД", crit:"Висок", access:"Физически (ЦОД)", cert:"ISO 27001 + 22301", inc:true, aud:true, sec:true, rev:"2025-11-20", status:"Активен", owner:"Фасилити" },
+  { name:"MailPro", service:"Имейл и комуникации (SaaS)", crit:"Висок", access:"Само данни", cert:"ISO/IEC 27001", inc:true, aud:false, sec:true, rev:"2025-09-10", status:"Активен", owner:"ИТ дирекция" },
+  { name:"SoftMaint ООД", service:"Поддръжка на бизнес софтуер", crit:"Висок", access:"Отдалечен достъп", cert:"SOC 2 Type II", inc:true, aud:true, sec:false, rev:"2025-05-05", status:"В преглед", owner:"Приложения" },
+  { name:"AccountPlus", service:"Счетоводни услуги (лични данни)", crit:"Среден", access:"Само данни", cert:"Няма", inc:true, aud:false, sec:false, rev:"", status:"Активен", owner:"Финанси" },
+  { name:"LeadCRM", service:"CRM / маркетинг (SaaS)", crit:"Среден", access:"Само данни", cert:"SOC 2", inc:false, aud:false, sec:true, rev:"2024-12-01", status:"Активен", owner:"Маркетинг" },
+  { name:"HardSupply", service:"Доставка на хардуер", crit:"Нисък", access:"Без достъп", cert:"Няма", inc:false, aud:false, sec:false, rev:"2026-01-15", status:"Активен", owner:"Доставки" },
+];
+
+const KEY="nis2suppliers_v1";
+function seed(){ return SAMPLE.map((s,i)=>Object.assign({id:"s"+i}, s)); }
+let sup = load();
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); return s&&s.length?s:seed(); }catch(e){ return seed(); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(sup)); }catch(e){} }
+
+// add-form selects
+const nAccess=document.getElementById("nAccess"); ACCESS.forEach(a=>nAccess.add(new Option(a,a))); nAccess.value="Само данни";
+
+function daysSince(d){ if(!d) return Infinity; const t=new Date(d); if(isNaN(t)) return Infinity; return (Date.now()-t.getTime())/86400000; }
+function isOverdue(d){ return daysSince(d) > 365; }
+
+function renderStats(){
+  const n=sup.length;
+  document.getElementById("cTotal").textContent=n;
+  document.getElementById("cCrit").textContent=sup.filter(s=>s.crit==="Критичен"||s.crit==="Висок").length;
+  document.getElementById("cIncident").textContent = n? Math.round(sup.filter(s=>s.inc).length/n*100)+"%":"0%";
+  document.getElementById("cAudit").textContent = n? Math.round(sup.filter(s=>s.aud).length/n*100)+"%":"0%";
+  document.getElementById("cOverdue").textContent = sup.filter(s=>isOverdue(s.rev)).length;
+}
+
+function opt(list,v){ return list.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join(""); }
+
+function render(){
+  const tb=document.getElementById("rows");
+  tb.innerHTML = sup.map((s,idx)=>`
+    <tr data-idx="${idx}">
+      <td>
+        <input type="text" data-f="name" value="${(s.name||'').replace(/"/g,'&quot;')}">
+        <input type="text" class="sub" data-f="service" value="${(s.service||'').replace(/"/g,'&quot;')}" placeholder="услуга / продукт">
+      </td>
+      <td><select class="crit-sel ${critClass(s.crit)}" data-f="crit">${opt(CRITS,s.crit)}</select></td>
+      <td><select data-f="access">${opt(ACCESS,s.access)}</select></td>
+      <td><input type="text" data-f="cert" value="${(s.cert||'').replace(/"/g,'&quot;')}" placeholder="напр. ISO 27001"></td>
+      <td><div class="clauses">
+        <label>Увед.<input type="checkbox" data-f="inc" ${s.inc?'checked':''}></label>
+        <label>Одит<input type="checkbox" data-f="aud" ${s.aud?'checked':''}></label>
+        <label>Мин.сиг.<input type="checkbox" data-f="sec" ${s.sec?'checked':''}></label>
+      </div></td>
+      <td><input type="date" data-f="rev" value="${s.rev||''}">
+        <div class="${isOverdue(s.rev)?'overdue':'ok-rev'}">${isOverdue(s.rev)?'⚠ просрочена':'актуална'}</div></td>
+      <td><select data-f="status">${opt(STATUS,s.status)}</select></td>
+      <td><input type="text" data-f="owner" value="${(s.owner||'').replace(/"/g,'&quot;')}" placeholder="—"></td>
+      <td><button class="del" title="Изтрий">✕</button></td>
+    </tr>`).join("");
+  if(!sup.length) tb.innerHTML=`<tr><td colspan="9" style="text-align:center;color:var(--ink-soft);padding:20px">Няма доставчици. Добавете доставчик или заредете примерните данни.</td></tr>`;
+  tb.querySelectorAll("tr[data-idx]").forEach(tr=>{
+    const idx=+tr.dataset.idx;
+    tr.querySelectorAll("[data-f]").forEach(inp=>{
+      const f=inp.dataset.f;
+      if(inp.type==="checkbox"){ inp.onchange=()=>{ sup[idx][f]=inp.checked; save(); renderStats(); }; }
+      else if(inp.tagName==="SELECT"){ inp.onchange=()=>{ sup[idx][f]=inp.value; if(f==="crit"){ inp.className="crit-sel "+critClass(inp.value); } save(); renderStats(); }; }
+      else { inp.oninput=()=>{ sup[idx][f]=inp.value; save(); if(f==="rev"){ render(); } renderStats(); }; }
+    });
+    tr.querySelector(".del").onclick=()=>{ if(confirm("Изтриване на доставчика?")){ sup.splice(idx,1); save(); renderAll(); } };
+  });
+}
+function renderAll(){ renderStats(); render(); }
+
+document.getElementById("btnAdd").onclick=()=>{
+  const name=document.getElementById("nName").value.trim(); if(!name){ alert("Въведете име на доставчика."); return; }
+  sup.unshift({ id:"c"+Date.now(), name, service:document.getElementById("nService").value.trim(),
+    crit:document.getElementById("nCrit").value, access:document.getElementById("nAccess").value,
+    cert:"", inc:false, aud:false, sec:false, rev:"", status:"В преглед", owner:"" });
+  document.getElementById("nName").value=""; document.getElementById("nService").value="";
+  save(); renderAll();
+};
+document.getElementById("btnReset").onclick=()=>{ if(confirm("Зареждане на примерните данни? Това ще замени текущия регистър.")){ sup=seed(); save(); renderAll(); } };
+document.getElementById("btnPrint").onclick=()=>window.print();
+document.getElementById("btnCSV").onclick=()=>{
+  const head=["Доставчик","Услуга","Критичност","Ниво на достъп","Сертификат","Увед. при инцидент","Право на одит","Мин. сигурност","Последна оценка","Просрочена","Статус","Отговорник"];
+  const yn=b=>b?"Да":"Не";
+  const rows=sup.map(s=>[s.name,s.service,s.crit,s.access,s.cert,yn(s.inc),yn(s.aud),yn(s.sec),s.rev||"",isOverdue(s.rev)?"Да":"Не",s.status,s.owner]);
+  const csv=[head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n");
+  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="registar-na-dostavchitsi.csv"; a.click();
+};
+
+renderAll();
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>
