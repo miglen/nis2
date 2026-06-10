@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Идентичността в ерата на AI — презентация</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  :root {
+    --blue: #15508a;
+    --blue-strong: #0d3a66;
+    --blue-soft: #eaf1f9;
+    --blue-line: #cfdef0;
+    --ink: #1b2733;
+    --ink-soft: #5b6b7b;
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --line: #e3eaf2;
+    --add: #1a7f4b;
+    --add-soft: #e9f7ef;
+    --add-line: #b6e6c6;
+    --gold: #c98a00;
+    --gold-soft: #fbf3df;
+    --red: #b3261e;
+    --red-soft: #fdeeed;
+    --radius: 14px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: "Georgia", "Times New Roman", serif;
+    --shadow: 0 2px 12px rgba(20,50,90,.08);
+    --shadow-lg: 0 10px 34px rgba(20,50,90,.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+  /* top progress */
+  .progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--blue); width: 0; z-index: 130; transition: width .35s ease; }
+
+  /* slides */
+  .slide { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity .4s ease, transform .4s ease; padding: 84px 6vw 96px; }
+  .slide.active { opacity: 1; visibility: visible; transform: none; }
+  .inner { display: flex; flex-direction: column; width: 100%; max-width: 1080px; transform-origin: center center; }
+
+  .kicker { font-size: clamp(11px, 1.1vw, 13px); letter-spacing: .16em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+
+  /* slide header */
+  .shead { display: flex; align-items: center; gap: 22px; margin-bottom: 18px; }
+  .mnum { flex: none; width: clamp(64px, 7vw, 88px); height: clamp(64px, 7vw, 88px); border-radius: 20px; background: linear-gradient(135deg, var(--blue), var(--blue-strong)); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 3.4vw, 40px); box-shadow: var(--shadow); }
+  .shead h2 { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(26px, 3.6vw, 42px); line-height: 1.1; margin: 4px 0 0; overflow-wrap: break-word; }
+  .lead { font-size: clamp(15px, 1.6vw, 20px); color: var(--ink-soft); margin: 0 0 24px; max-width: 70ch; }
+
+  /* talking points */
+  .points { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 26px; }
+  .points.three { grid-template-columns: 1fr 1fr 1fr; }
+  .pt { display: flex; gap: 14px; background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; border-left: 4px solid var(--blue); }
+  .pt strong { display: block; color: var(--blue-strong); font-size: clamp(15px, 1.5vw, 18px); margin-bottom: 3px; }
+  .pt span { color: var(--ink-soft); font-size: clamp(13.5px, 1.35vw, 16px); line-height: 1.5; }
+  .pt .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); margin-top: 8px; }
+  .pt.green { border-left-color: var(--add); } .pt.green .dot { background: var(--add); }
+  .pt.red { border-left-color: var(--red); } .pt.red .dot { background: var(--red); }
+  .pt.gold { border-left-color: var(--gold); } .pt.gold .dot { background: var(--gold); }
+
+  .takeaway { margin-top: 24px; background: var(--gold-soft); border-left: 4px solid var(--gold); border-radius: 10px; padding: 14px 20px; font-size: clamp(14px, 1.5vw, 18px); }
+  .takeaway b { color: var(--gold); }
+  .takeaway.alert { background: var(--red-soft); border-left-color: var(--red); }
+  .takeaway.alert b { color: var(--red); }
+
+  /* big number stats */
+  .bignums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .bignums.two { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; width: 100%; }
+  .bn { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; text-align: center; border-top: 4px solid var(--blue); }
+  .bn .num { font-family: var(--serif); font-weight: 700; font-size: clamp(34px, 4.4vw, 54px); color: var(--blue-strong); line-height: 1.05; }
+  .bn strong { display: block; margin-top: 8px; color: var(--blue-strong); font-size: clamp(14px, 1.5vw, 18px); }
+  .bn span { display: block; margin-top: 6px; color: var(--ink-soft); font-size: clamp(12.5px, 1.25vw, 15px); line-height: 1.5; }
+  .bn.red { border-top-color: var(--red); } .bn.red .num { color: var(--red); }
+  .bn.gold { border-top-color: var(--gold); } .bn.gold .num { color: var(--gold); }
+  .bn.green { border-top-color: var(--add); } .bn.green .num { color: var(--add); }
+
+  /* two-column comparison (old vs new) */
+  .cmp { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .cmprow { display: grid; grid-template-columns: 200px 1fr 1fr; gap: 12px; align-items: stretch; }
+  .cmprow .dim { display: flex; align-items: center; font-weight: 700; color: var(--blue-strong); font-size: clamp(13px, 1.4vw, 16px); padding: 0 4px; }
+  .hcell { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; border-radius: 10px; font-weight: 700; color: #fff; font-size: clamp(14px, 1.5vw, 18px); }
+  .hcell.h1 { background: var(--ink-soft); }
+  .hcell.h2 { background: linear-gradient(135deg, var(--blue), var(--blue-strong)); }
+  .cmprow .c { background: var(--panel); border-radius: 10px; box-shadow: var(--shadow); padding: 11px 15px; font-size: clamp(13px, 1.3vw, 15.5px); color: var(--ink-soft); line-height: 1.45; border-left: 3px solid var(--line); }
+  .cmprow .c.new { background: var(--add-soft); border-left-color: var(--add); color: var(--ink); }
+  .cmprow .c b { color: var(--blue-strong); }
+  @media (max-width: 760px) {
+    .cmprow { grid-template-columns: 1fr 1fr; }
+    .cmprow .dim { grid-column: 1 / -1; padding-top: 6px; }
+    .cmprow.head .dim { display: none; }
+  }
+
+  /* numbered list (DORA pillars, framework stages) */
+  .numlist { display: flex; flex-direction: column; gap: 10px; }
+  .numlist .nl { display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 16px; }
+  .numlist .nl .n { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; }
+  .numlist .nl strong { color: var(--blue-strong); font-size: clamp(14px, 1.45vw, 17px); }
+  .numlist .nl span { display: block; color: var(--ink-soft); font-size: clamp(13px, 1.3vw, 15.5px); line-height: 1.45; }
+
+  /* horizontal flow (5 stages) */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .fstep { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 14px; text-align: center; border-top: 4px solid var(--blue); position: relative; }
+  .fstep .fn { font-family: var(--serif); font-weight: 700; color: var(--blue); font-size: clamp(18px, 2vw, 24px); }
+  .fstep strong { display: block; color: var(--blue-strong); margin-top: 4px; font-size: clamp(14px, 1.4vw, 17px); }
+  .fstep span { display: block; color: var(--ink-soft); margin-top: 6px; font-size: clamp(12px, 1.15vw, 14px); line-height: 1.45; }
+  @media (max-width: 860px) { .flow { grid-template-columns: 1fr; } }
+
+  /* big question slide */
+  .question .inner { text-align: center; align-items: center; }
+  .question .qbig { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(32px, 5vw, 60px); line-height: 1.15; margin: 14px 0 18px; max-width: 20ch; }
+  .question .qsub { font-size: clamp(15px, 1.8vw, 21px); color: var(--ink-soft); max-width: 56ch; margin: 0; }
+
+  /* cover slide */
+  .cover .inner { text-align: center; align-items: center; }
+  .cover .badge { display: inline-block; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); background: var(--blue-soft); border: 1px solid var(--blue-line); padding: 7px 18px; border-radius: 999px; margin-bottom: 26px; }
+  .cover h1 { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(32px, 5vw, 60px); line-height: 1.08; margin: 0 0 16px; }
+  .cover .csub { font-size: clamp(16px, 1.9vw, 23px); color: var(--ink-soft); margin: 0 0 36px; max-width: 60ch; }
+  .agenda { display: grid; gap: 12px; width: 100%; max-width: 760px; text-align: left; }
+  .agenda .ai { display: flex; align-items: center; gap: 16px; background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 20px; font-size: clamp(15px, 1.7vw, 19px); font-weight: 600; color: var(--ink); }
+  .agenda .ai .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; }
+  .cover .hint { margin-top: 32px; font-size: 13px; color: var(--ink-soft); }
+  .cover .hint kbd { background: #fff; border: 1px solid var(--blue-line); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px; font-family: var(--sans); font-size: 12px; color: var(--blue-strong); }
+
+  /* closing slide */
+  .closing .inner { text-align: center; align-items: center; }
+  .closing .big { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(30px, 4.6vw, 54px); line-height: 1.12; margin: 0 0 18px; max-width: 22ch; }
+  .closing .sub { font-size: clamp(16px, 1.9vw, 22px); color: var(--ink-soft); max-width: 60ch; margin: 0 0 14px; }
+  .closing .punch { display: inline-block; background: var(--gold-soft); border: 1px solid var(--gold); color: var(--gold); font-weight: 700; padding: 10px 22px; border-radius: 999px; font-size: clamp(15px, 1.7vw, 20px); margin: 8px 0 34px; }
+  .closing .cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .closing .cta a { text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 999px; }
+  .closing .cta a.primary { background: var(--blue); color: #fff; box-shadow: var(--shadow-lg); }
+  .closing .cta a.primary:hover { background: var(--blue-strong); }
+  .closing .cta a.ghost { color: var(--blue); border: 1px solid var(--blue-line); background: #fff; }
+  .closing .cta a.ghost:hover { background: var(--blue-soft); }
+
+  /* nav chevrons */
+  .chev { position: fixed; top: 50%; transform: translateY(-50%); z-index: 55; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--blue-line); background: rgba(255,255,255,.85); backdrop-filter: blur(6px); color: var(--blue); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); }
+  .chev:hover { background: #fff; color: var(--blue-strong); }
+  .chev.prev { left: 18px; } .chev.next { right: 18px; }
+  .chev:disabled { opacity: .3; cursor: default; }
+
+  /* bottom control bar */
+  .controls { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 58; display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; box-shadow: var(--shadow); }
+  .controls .counter { font-size: 13px; font-weight: 700; color: var(--blue-strong); min-width: 60px; text-align: center; }
+  .dots { display: flex; gap: 5px; }
+  .dots button { width: 8px; height: 8px; border-radius: 50%; border: 0; background: var(--blue-line); cursor: pointer; padding: 0; }
+  .dots button.on { background: var(--blue); transform: scale(1.25); }
+  .controls .arrow { border: 0; background: none; color: var(--blue); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+  .controls .arrow:disabled { opacity: .3; cursor: default; }
+
+  @media (max-width: 980px) { .points, .points.three { grid-template-columns: 1fr; } .bignums { grid-template-columns: 1fr; } .bignums.two { grid-template-columns: 1fr; } }
+  @media (max-width: 820px) {
+    .chev { display: none; }
+    .slide { padding: 76px 18px 100px; }
+    .dots { display: none; }
+  }
+  @media (max-width: 600px) {
+    .shead { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .mnum { width: 56px; height: 56px; border-radius: 14px; }
+    .shead h2 { font-size: 25px; }
+    .lead { font-size: 15px; }
+    .pt { padding: 14px 15px; }
+    .takeaway { font-size: 14.5px; }
+  }
+</style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="sitebar" style="position:fixed;left:0;right:0;top:0;">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav"></nav>
+  </header>
+
+  <!-- 1 · COVER -->
+  <section class="slide cover active" data-label="Заглавие">
+    <div class="inner">
+      <span class="badge">Security Keynote · Букурещ · 14 май 2026</span>
+      <h1>Идентичността<br>в ерата на AI</h1>
+      <p class="csub">Защо Shadow AI изисква нов подход към управлението (GRC), Zero Trust и управлението на идентичности и достъп (IAM)</p>
+      <div class="agenda">
+        <div class="ai"><span class="n">1</span> GRC — управлението на идентичностите като основа на съответствието</div>
+        <div class="ai"><span class="n">2</span> Zero Trust — сигурност с идентичността на първо място</div>
+        <div class="ai"><span class="n">3</span> AI — новата граница на идентичността: агенти, LLM и автономни системи</div>
+      </div>
+      <div class="hint">Навигация: <kbd>←</kbd> <kbd>→</kbd> или стрелките по екрана</div>
+    </div>
+  </section>
+
+  <!-- 2 · SPEAKER -->
+  <section class="slide" data-label="За лектора">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum" style="font-size:clamp(24px,2.6vw,32px);">👤</div>
+        <div>
+          <div class="kicker">За лектора</div>
+          <h2>Миглен Евлогиев</h2>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>CISO в Evrotrust</strong><span>Сигурност на цифровата идентичност и удостоверителните услуги в цяла Европа.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Председател на Българската асоциация по киберсигурност</strong><span>Развитие на професионалната общност и националния капацитет.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Бивш VP Information Security в Payhawk</strong><span>Изграждане на цялостни програми за сигурност (PCI DSS, NIS 2, DORA, SOC, ISO 27001) в условия на бърз растеж.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Един от основополагащите инженери на AWS Managed Security</strong><span>Изграждане на управляеми услуги за сигурност в облака.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>15+ години опит</strong><span>Облачни технологии, финтех и регулирани корпоративни среди.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · QUESTION -->
+  <section class="slide question" data-label="Неудобният въпрос">
+    <div class="inner">
+      <span class="kicker">Неудобният въпрос</span>
+      <h2 class="qbig">Колко от вашите служители използваха AI днес — без вие да знаете?</h2>
+      <p class="qsub">Отговорът почти със сигурност не е „нула“. И точно там започва разговорът за идентичността.</p>
+    </div>
+  </section>
+
+  <!-- 4 · AGENDA: THREE PILLARS -->
+  <section class="slide" data-label="Три стълба">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum" style="font-size:clamp(20px,2.2vw,26px);">⛩</div>
+        <div>
+          <div class="kicker">Програма</div>
+          <h2>Три стълба, един периметър</h2>
+        </div>
+      </div>
+      <p class="lead">Управлението, архитектурата и AI рискът се срещат в една точка: <b>идентичността като периметър на сигурността</b>. Всеки стълб укрепва останалите — слабост в единия подкопава и трите.</p>
+      <div class="points three">
+        <div class="pt"><span class="dot"></span><div><strong>GRC</strong><span>Управлението на идентичностите като основа на съответствието — удовлетворява регулаторите и едновременно укрепва реалната защита.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Zero Trust</strong><span>Архитектура за сигурност с идентичността на първо място — изградена за разпределена, облачна, хибридна работна сила.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>AI</strong><span>Управление на новата граница на идентичността — където AI агенти, LLM и автономни системи се превръщат в неуправлявани идентичности.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Идентичността е общата контролна равнина и на трите стълба.</div>
+    </div>
+  </section>
+
+  <!-- 5 · BEYOND CHECKBOX COMPLIANCE -->
+  <section class="slide" data-label="Отвъд чекбокса">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">01</div>
+        <div>
+          <div class="kicker">GRC</div>
+          <h2>Отвъд формалното съответствие</h2>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Неудобната истина</strong><span>Програмите за съответствие, проектирани да удовлетворят одиторите, не водят автоматично до по-силна сигурност. Пропастта между политиката на хартия и практиката на терен остава огромна — и противниците я експлоатират всеки ден.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Данните говорят</strong><span>През 2025 г. <b>84% от организациите</b> са преживели пробив, свързан с идентичности — мнозинството от тях в организации, преминали успешно одит за съответствие през предходните 12 месеца.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Съответствието е под, а не таван. Лидерите по сигурност трябва да затворят разликата между одитна готовност и оперативна устойчивост.</div>
+    </div>
+  </section>
+
+  <!-- 6 · RISK-BASED IDENTITY GOVERNANCE -->
+  <section class="slide" data-label="Риск-базирано управление">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">02</div>
+        <div>
+          <div class="kicker">GRC</div>
+          <h2>Риск-базирано управление на идентичностите</h2>
+        </div>
+      </div>
+      <p class="lead">Не всички идентичности носят еднакъв риск. Подходът, базиран на риска, насочва ресурсите там, където експозицията е най-висока.</p>
+      <div class="points">
+        <div class="pt red"><span class="dot"></span><div><strong>Привилегировани акаунти</strong><span><b>72% от пробивите</b> включват експлоатация на привилегировани идентификационни данни — а много организации нямат видимост в реално време кой притежава повишен достъп.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Сервизни акаунти</strong><span>Неуправляваните сервизни акаунти и API ключове се разпространяват тихо из средите, трупат права и избягват стандартните контроли на жизнения цикъл.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>„Осиротели“ идентичности</strong><span>Идентичности, надживели целта си, са отворени врати — често забравени, никога преглеждани и все още с пълни права.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Експозиция в тъмната мрежа</strong><span>Средната служителска идентичност има <b>146 изтекли записа</b> в тъмната мрежа — credential stuffing е постоянен и мащабируем вектор на атака.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Фокусирайте контролите върху привилегирования достъп, машинните акаунти и забравените идентичности.</div>
+    </div>
+  </section>
+
+  <!-- 7 · AUTOMATING AUDIT READINESS -->
+  <section class="slide" data-label="Одитна готовност">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">03</div>
+        <div>
+          <div class="kicker">GRC</div>
+          <h2>Автоматизиране на одитната готовност</h2>
+        </div>
+      </div>
+      <p class="lead">От периодично към непрекъснато: традиционното съответствие разчита на моментни снимки — трудоемки, податливи на грешки и слепи за случващото се между одитите. Модерните IAM платформи поддържат <b>непрекъсната позиция на съответствие</b>.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Доказателства в реално време</strong><span>Одитни доказателства, генерирани автоматично от IAM телеметрията — при всяко събитие за достъп и всяко политическо решение.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Автоматизирани прегледи на достъпа</strong><span>Заместват ръчните цикли на сертификация и намаляват човешката грешка при събиране на одитни артефакти.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Готови за одит табла</strong><span>Извеждат пропуските на повърхността, преди регулаторите да ги открият.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Бизнес аргументът</strong><span>Организациите, автоматизирали одитната готовност, намаляват разходите за труд по съответствие с до <b>60%</b> и едновременно подобряват откриването на аномалии в достъпа между формалните прегледи.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · REGULATORY LANDSCAPE -->
+  <section class="slide" data-label="Регулаторна рамка">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">04</div>
+        <div>
+          <div class="kicker">GRC</div>
+          <h2>Регулаторната рамка: NIS 2, DORA, EU AI Act</h2>
+        </div>
+      </div>
+      <p class="lead">Три големи регулаторни рамки пренаписват IAM задълженията за организациите, опериращи в или с Европа. Стратегическият императив: картографирайте IAM контролите към бизнес резултати <b>и в трите</b> — без силозни програми, които дублират усилия и замъгляват риска.</p>
+      <div class="points three">
+        <div class="pt"><span class="dot"></span><div><strong>NIS 2</strong><span>Разширява задълженията за мрежова и информационна сигурност в 18 критични сектора. Изисква контроли на идентичността и достъпа, докладване на инциденти в рамките на 24 часа и отговорност на ръководството.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>DORA</strong><span>Цифрова оперативна устойчивост за финансови субекти. Управление на ИКТ риска, надзор над трети страни и тестове за устойчивост — всички стъпват върху силно управление на идентичностите. В сила от януари 2025 г.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>EU AI Act</strong><span>Поетапно прилагане — задълженията за внедрители на високорискови AI системи вече действат. Изисква одитируемост, механизми за човешки надзор и документирани контроли на достъпа.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · CONTROLS ACROSS FRAMEWORKS -->
+  <section class="slide" data-label="Контроли през рамки">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">05</div>
+        <div>
+          <div class="kicker">GRC</div>
+          <h2>Едни контроли — няколко рамки</h2>
+        </div>
+      </div>
+      <p class="lead">Най-ефективната позиция: <b>един набор IAM контроли</b>, интелигентно картографиран към няколко мандата. Конвергенцията премахва дублираните усилия — организациите с единна IAM рамка отчитат <b>40% по-малко пропуски</b> при кръстосани одити. Петте стълба на DORA — всички зависими от идентичността:</p>
+      <div class="numlist">
+        <div class="nl"><span class="n">1</span><div><strong>Управление на ИКТ риска</strong><span>Документирани, одитируеми контроли върху това кой достъпва критичните системи.</span></div></div>
+        <div class="nl"><span class="n">2</span><div><strong>Докладване на инциденти</strong><span>Идентичностната телеметрия осигурява одитната следа за навременно и точно докладване.</span></div></div>
+        <div class="nl"><span class="n">3</span><div><strong>Тестове за устойчивост</strong><span>Пентестове и TLPT учения подлагат идентичностните контроли на реалистични атакуващи сценарии.</span></div></div>
+        <div class="nl"><span class="n">4</span><div><strong>Риск от трети страни</strong><span>Идентичностите на доставчици и партньори се управляват със същата строгост като вътрешните потребители.</span></div></div>
+        <div class="nl"><span class="n">5</span><div><strong>Обмен на информация</strong><span>Сигурни, верифицирани по идентичност канали за обмен на разузнавателна информация в сектора.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · ZERO TRUST FOR DISTRIBUTED WORKFORCE -->
+  <section class="slide" data-label="Zero Trust">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">06</div>
+        <div>
+          <div class="kicker">Zero Trust</div>
+          <h2>Zero Trust за разпределената работна сила</h2>
+        </div>
+      </div>
+      <p class="lead">Хибридната и дистанционната работа окончателно разтвориха традиционния мрежов периметър. Служители, подизпълнители и партньори достъпват критични системи от домове, летища и облачни среди — от устройства, които може и да не са корпоративно управлявани.</p>
+      <div class="cmp">
+        <div class="cmprow head">
+          <div class="dim"></div>
+          <div class="hcell h1">Старият модел</div>
+          <div class="hcell h2">Новата реалност</div>
+        </div>
+        <div class="cmprow">
+          <div class="dim">Доверие</div>
+          <div class="c">Доверявай се на всички вътре в периметъра; проверявай само на ръба. Модел за свят, който вече не съществува.</div>
+          <div class="c new">Периметър няма. <b>Всяка заявка за достъп</b> — от всяко място, устройство и мрежа — се проверява непрекъснато.</div>
+        </div>
+        <div class="cmprow">
+          <div class="dim">Константата</div>
+          <div class="c">Мрежата и местоположението определят достъпа.</div>
+          <div class="c new"><b>Идентичността</b> е единствената константа през локации, устройства и мрежи — тя е новият периметър и трябва да се управлява като такъв.</div>
+        </div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Сигурност с идентичността на първо място — това е фундаментът на Zero Trust.</div>
+    </div>
+  </section>
+
+  <!-- 11 · HUMAN AND MACHINE IDENTITIES -->
+  <section class="slide" data-label="Машинни идентичности">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">07</div>
+        <div>
+          <div class="kicker">Zero Trust</div>
+          <h2>Човешки и машинни идентичности</h2>
+        </div>
+      </div>
+      <p class="lead">Повърхността на идентичността вече не са само хора. Сервизни акаунти, API ключове, CI/CD конвейери, RPA ботове и AI агенти — всички са идентичности, и се множат по-бързо, отколкото традиционните модели на управление могат да поемат.</p>
+      <div class="bignums">
+        <div class="bn red"><div class="num">79%</div><strong>Се чувстват неподготвени</strong><span>От специалистите по сигурност заявяват, че не са готови да предотвратят атаки срещу нечовешки идентичности (NHI).</span></div>
+        <div class="bn gold"><div class="num">93%</div><strong>Декларират увереност</strong><span>От организациите твърдят, че машинните им идентичности са защитени — число, което при по-внимателен поглед разказва друга история.</span></div>
+        <div class="bn"><div class="num">61%</div><strong>Имат някаква видимост</strong><span>Едва толкова от същите организации имат поне частична видимост върху инвентара си от машинни идентичности — разлика от 32 пункта спрямо увереността.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Увереност без видимост е сляпо петно — започнете с инвентар на машинните идентичности.</div>
+    </div>
+  </section>
+
+  <!-- 12 · ZERO TRUST MATURITY JOURNEY -->
+  <section class="slide" data-label="Зрелост на Zero Trust">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">08</div>
+        <div>
+          <div class="kicker">Zero Trust</div>
+          <h2>Пътят към Zero Trust зрелост</h2>
+        </div>
+      </div>
+      <p class="lead">Zero Trust не е продукт, който купувате, нито проект, който приключвате. Това е поетапно, непрекъснато пътуване — и успешните организации започват с <b>идентичността</b>, не с инфраструктурата. Без „биг бенг“ трансформация.</p>
+      <div class="flow" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="fstep"><div class="fn">1</div><strong>Идентичност</strong><span>MFA, SSO, управление на привилегирования достъп.</span></div>
+        <div class="fstep"><div class="fn">2</div><strong>Устройства</strong><span>Съответствие на крайните точки, условен достъп.</span></div>
+        <div class="fstep"><div class="fn">3</div><strong>Работни натоварвания</strong><span>Микросегментация, най-малки права.</span></div>
+        <div class="fstep"><div class="fn">4</div><strong>Откриване и реакция</strong><span>UBA, автоматизирана ремедиация, резервни копия.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Времето между откриване на заплахата и действие е критичната променлива — компрометиран привилегирован акаунт нанася щети за минути. Зрелостта се мери в скорост на откриване, ограничаване и възстановяване.</div>
+    </div>
+  </section>
+
+  <!-- 13 · 80% OF ZT FAILURES -->
+  <section class="slide" data-label="Провали на IAM">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">09</div>
+        <div>
+          <div class="kicker">Zero Trust</div>
+          <h2>Защо 80% от провалите на Zero Trust започват с IAM</h2>
+        </div>
+      </div>
+      <p class="lead">Принципите на Zero Trust са здрави — но внедряването се проваля, когато IAM основите са пренебрегнати. Реални пробиви илюстрират цената на IAM грешките в мащаб.</p>
+      <div class="points three">
+        <div class="pt red"><span class="dot"></span><div><strong>Президентски избори 2024</strong><span>IAM провал: изтекли операторски идентификационни данни от сървър за обучение. Без zero-day. Без сложен зловреден код.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Orange 2025</strong><span>IAM провал: стари идентификационни данни от инфостийлър, без MFA, без наблюдение. Над месец неоткрит достъп, завършил с тричасов прозорец за ексфилтрация на данни на 25 февруари 2025 г.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>„Хипократ“ 2024</strong><span>IAM провал: слаби RDP идентификационни данни към SaaS на трета страна — атаки с ransomware от семейството Phobos.</span></div></div>
+      </div>
+      <div class="takeaway alert"><b>Извод:</b> Никоя от тези атаки не е изисквала сложни техники — само пренебрегнати основи на управлението на идентичности.</div>
+    </div>
+  </section>
+
+  <!-- 14 · AI INFLECTION POINT -->
+  <section class="slide" data-label="AI повратна точка">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">10</div>
+        <div>
+          <div class="kicker">AI</div>
+          <h2>Повратната точка на изкуствения интелект</h2>
+        </div>
+      </div>
+      <p class="lead">Shadow AI е новото Shadow IT — но с последствия с порядъци по-тежки. Когато служителите внедряваха неодобрени SaaS инструменти, рискът беше изтичане на данни. Когато внедряват автономни AI агенти, рискът е <b>неуправлявано вземане на решения с машинна скорост</b>.</p>
+      <div class="bignums two">
+        <div class="bn red"><div class="num">890%</div><strong>Ръст на GenAI трафика</strong><span>Годишен растеж на корпоративния GenAI трафик само през 2024 г.</span></div>
+        <div class="bn red"><div class="num">427%</div><strong>AI-задвижвани атаки</strong><span>Годишен ръст на кибератаките с AI — противниците възприеха технологията по-бързо от защитниците.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Залогът е по-висок от Shadow IT — скоростта и автономността променят природата на риска.</div>
+    </div>
+  </section>
+
+  <!-- 15 · SHADOW AI: HYPE VS REALITY -->
+  <section class="slide" data-label="Shadow AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">11</div>
+        <div>
+          <div class="kicker">AI</div>
+          <h2>Shadow AI: хайп срещу реалност</h2>
+        </div>
+      </div>
+      <p class="lead">Рискът не е теоретичен. Shadow AI се проявява в конкретни, наблюдаеми поведения, случващи се във вашата организация днес — често без злонамерено намерение, но със сериозни последствия за данните, съответствието и управлението на идентичностите.</p>
+      <div class="points three">
+        <div class="pt"><span class="dot"></span><div><strong>Чувствителни данни в ChatGPT</strong><span>Служители рутинно поставят фирмени данни, лични данни на клиенти и вътрешна стратегия в публични AI модели — без контрол на местоположението на данните, без одитна следа, без механизъм за изтегляне.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Неодобрени AI инструменти</strong><span>Бизнес екипи купуват и внедряват AI инструменти — от асистенти за писане до автоматизация на процеси — без преглед за сигурност, оценка на доставчика или IAM интеграция.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Неконтролирани LLM API в кода</strong><span>Разработчици вграждат LLM API на трети страни директно в продукционни приложения без идентичностни контроли, ограничаване на заявките или управление — неуправлявани пътища за данни на ниво код.</span></div></div>
+      </div>
+      <div class="takeaway alert"><b>Кризата OpenClaw:</b> 40 000+ изложени инстанции на AI агенти, открити публично — идентификационни данни в чист текст, 1 184 зловредни „умения“ в един-единствен маркетплейс. Това е Shadow AI в индустриален мащаб.</div>
+    </div>
+  </section>
+
+  <!-- 16 · IDENTITY GAP IN AI GOVERNANCE -->
+  <section class="slide" data-label="Пропастта при AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">12</div>
+        <div>
+          <div class="kicker">AI</div>
+          <h2>Пропастта на идентичността в AI управлението</h2>
+        </div>
+      </div>
+      <p class="lead">AI агентите не са просто инструменти — те са <b>идентичности</b>. Удостоверяват се пред системи, достъпват чувствителни данни, извикват API и вземат решения. Ако не са регистрирани и управлявани в IAM платформата ви, те са неуправлявани актьори с достъп до най-критичните ви ресурси.</p>
+      <div class="points">
+        <div class="pt red"><span class="dot"></span><div><strong>Уязвимости в MCP сървъри</strong><span>8 000+ MCP сървъра са публично изложени — 36,7% уязвими на Server-Side Request Forgery (SSRF), позволяващ латерално движение в облачни среди.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Верижни инжекционни атаки</strong><span>SQL инжекция, верижно съчетана с prompt инжекция, отваря път към пълно компрометиране на агента — нападателите контролират разсъжденията му, не само достъпа до данни.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Императивът на управлението</strong><span>Всеки AI агент трябва да се третира като нечовешка идентичност: най-малки права, управление на жизнения цикъл, наблюдение за поведенчески аномалии и същата честота на прегледи на достъпа като при хората.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Ако не е в IAM платформата ви — не е управлявано. Точка.</div>
+    </div>
+  </section>
+
+  <!-- 17 · AI-DRIVEN IDENTITY SECURITY -->
+  <section class="slide" data-label="AI като защита">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">13</div>
+        <div>
+          <div class="kicker">AI</div>
+          <h2>AI в услуга на сигурността на идентичностите</h2>
+        </div>
+      </div>
+      <p class="lead">AI не е само риск за управление — той е и мощен инструмент за защита. Машинното обучение позволява на идентичностните платформи да откриват аномалии, да извеждат реалните заплахи и да реагират със скорост и мащаб, непостижими за човешки екип.</p>
+      <div class="points three">
+        <div class="pt"><span class="dot"></span><div><strong>ML откриване на аномалии</strong><span>Поведенчески базови линии от исторически модели на достъп — всяко отклонение задейства интелигентни, контекстни сигнали вместо статичен шум от правила.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Интелигентно приоритизиране</strong><span>AI намалява умората от сигнали, като корелира данни от идентичност, крайни точки и мрежа — извежда заплахите, които наистина имат значение за анализаторите.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Пропастта в контрола на достъпа</strong><span><b>97%</b> от организациите с AI-свързани пробиви през 2025 г. са нямали базови контроли на достъпа върху AI системите си — най-предотвратимата категория провал.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · COMPLIANCE IN THE AGE OF AI -->
+  <section class="slide" data-label="Съответствие и AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">14</div>
+        <div>
+          <div class="kicker">AI</div>
+          <h2>Съответствие в ерата на AI</h2>
+        </div>
+      </div>
+      <p class="lead">Регулаторните рамки бързо адресират AI риска — а финансовите и оперативните последици от неспазването са значителни. Организациите, които действат сега, градят стратегическо предимство, не просто избягват глоби.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>EU AI Act</strong><span>Задълженията за внедрители на високорискови AI системи вече действат. Глоби до <b>6% от глобалния годишен оборот</b> за сериозни нарушения. Одитируемост, човешки надзор и документирани контроли на достъпа са задължителни.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>DORA и AI управление</strong><span>DORA изисква автоматизирано управление на идентичностите за финансови субекти. AI системите в управлението на ИКТ риска трябва да са документирани, тествани и управлявани — включително идентичностите, които ги оперират.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>GDPR и обработка от AI</strong><span>AI системи, обработващи лични данни в мащаб, задействат GDPR — правно основание, минимизиране на данните и права на субекта важат и за автоматизираните конвейери.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Глобален отзвук</strong><span>Засегнати са и организации извън ЕС: ако обработвате данни на граждани на ЕС, обслужвате клиенти от ЕС или партнирате с регулирани в ЕС субекти — задълженията стигат и до вас.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 · THE CONVERGENCE -->
+  <section class="slide" data-label="Конвергенцията">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">15</div>
+        <div>
+          <div class="kicker">Синтез</div>
+          <h2>Конвергенцията: GRC + Zero Trust + AI</h2>
+        </div>
+      </div>
+      <p class="lead">Трите стълба не са паралелни работни потоци — те са лица на едно и също предизвикателство. Управлението, архитектурата на доверие и AI рискът споделят обща контролна равнина: <b>идентичността</b>. Организациите, които разпознаят тази конвергенция, ще изградят устойчивите, мащабируеми програми за сигурност.</p>
+      <div class="bignums two">
+        <div class="bn red"><div class="num">15% → 30%</div><strong>Пробиви с участие на трети страни</strong><span>Делът се удвои за една година — тенденция, която пресича и трите стълба едновременно.</span></div>
+        <div class="bn green"><div class="num">1</div><strong>Обща контролна равнина</strong><span>Идентичността не е техническо изискване — тя е бизнес фактор, който прави всяка друга инвестиция в сигурност работеща.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · PRACTICAL FRAMEWORK -->
+  <section class="slide" data-label="Практическа рамка">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">16</div>
+        <div>
+          <div class="kicker">Практика</div>
+          <h2>Практическа рамка в пет стъпки</h2>
+        </div>
+      </div>
+      <p class="lead">Превръщането на стратегията в действие изисква структуриран, повторяем подход. Тази петстепенна, вендор-неутрална рамка е план за зряла програма за сигурност на идентичностите — независимо къде се намирате по кривата на зрелостта днес.</p>
+      <div class="flow">
+        <div class="fstep"><div class="fn">1</div><strong>Откриване</strong><span>Инвентаризирайте всички идентичности — човешки и машинни, включително AI агенти.</span></div>
+        <div class="fstep"><div class="fn">2</div><strong>Класифициране</strong><span>Оценете риска и критичността на всяка идентичност и нейния достъп.</span></div>
+        <div class="fstep"><div class="fn">3</div><strong>Управление</strong><span>Политики, най-малки права, собственици и жизнен цикъл за всяка идентичност.</span></div>
+        <div class="fstep"><div class="fn">4</div><strong>Автоматизиране</strong><span>Автоматизирани прегледи, провизиране и деактивиране — без ръчни грешки.</span></div>
+        <div class="fstep"><div class="fn">5</div><strong>Наблюдение</strong><span>Непрекъсната телеметрия, поведенчески анализ и реакция при аномалии.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Всяка стъпка стъпва върху предишната. Наблюдение без управление — или управление без класифициране — лекува симптоми, а не първопричини. Започнете с откриването. Изградете основата. После ускорете.</div>
+    </div>
+  </section>
+
+  <!-- 21 · WHAT GOOD LOOKS LIKE -->
+  <section class="slide" data-label="Как изглежда добре">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">17</div>
+        <div>
+          <div class="kicker">Практика</div>
+          <h2>Как изглежда зрялата програма</h2>
+        </div>
+      </div>
+      <p class="lead">Зрялата програма за сигурност на идентичностите не се определя от инструментите, които ползва — а от способностите, които доставя. Ето резултатите, които отличават водещите организации от тези, които още реагират на последния пробив.</p>
+      <div class="points">
+        <div class="pt green"><span class="dot"></span><div><strong>Автоматизация на жизнения цикъл</strong><span>Безпроблемно постъпване, напускане и смяна на роли — нула „осиротели“ акаунти, нула ръчни грешки при провизиране.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Адаптивна MFA</strong><span>Контекстни политики за достъп, които предизвикват потребителя само когато рисковите сигнали го налагат — без триене за потребителите, устойчиви срещу нападателите.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>UBA-базирано откриване</strong><span>Поведенчески анализ, който извежда реалните заплахи преди да станат пробиви — а не след това.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Непрекъснато съответствие</strong><span>Отчетност в реално време и Zero Trust способности, които удовлетворяват регулаторите и намаляват одитната умора едновременно.</span></div></div>
+        <div class="pt gold"><span class="dot"></span><div><strong>Подход „способности преди марки“</strong><span>Вендор-неутрален по дизайн — оценявайте платформите по способности, не по бранд. Рамката надживява всяка отделна вендорска връзка.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 · KEY TAKEAWAYS -->
+  <section class="slide" data-label="Ключови изводи">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum" style="font-size:clamp(20px,2.2vw,26px);">★</div>
+        <div>
+          <div class="kicker">Обобщение</div>
+          <h2>Ключови изводи</h2>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt gold"><span class="dot"></span><div><strong>Не забранявайте AI — управлявайте го</strong><span>Вместо да ограничавате AI, вградете стабилно управление на идентичностите, за да овладеете рисковете и да отключите пълния му потенциал по сигурен начин.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Zero Trust се нуждае от IAM</strong><span>Без силна основа в управлението на идентичности и достъп инициативите за Zero Trust са неефективни и уязвими.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Съответствието е непрекъснато</strong><span>Преминете от периодични одити към непрекъснато съответствие в реално време, за да посрещате ефективно растящите регулаторни изисквания.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Започнете с идентичността</strong><span>Пътят към напреднала сигурност, Zero Trust зрелост и ефективно AI управление започва със солидни идентичностни основи.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · CLOSING -->
+  <section class="slide closing" data-label="Благодаря">
+    <div class="inner">
+      <span class="kicker">Заключение</span>
+      <h2 class="big">Благодаря!</h2>
+      <p class="sub">Въпросите са добре дошли. И не забравяйте —</p>
+      <span class="punch">Пълната забрана не работи — управлявайте употребата, не я потискайте.</span>
+      <div class="cta">
+        <a class="primary" href="nis2-ai.html">NIS 2 и изкуственият интелект →</a>
+        <a class="ghost" href="nhi-register.html">Регистър на NHI</a>
+        <a class="ghost" href="ai-inventory.html">AI-BOM инвентар</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- nav -->
+  <button class="chev prev" id="chevPrev" aria-label="Назад">‹</button>
+  <button class="chev next" id="chevNext" aria-label="Напред">›</button>
+
+  <div class="controls">
+    <button class="arrow" id="btnPrev" aria-label="Назад">◀</button>
+    <span class="counter" id="counter">1 / 23</span>
+    <div class="dots" id="dots"></div>
+    <button class="arrow" id="btnNext" aria-label="Напред">▶</button>
+  </div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let i = 0;
+
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const chevPrev = document.getElementById('chevPrev');
+  const chevNext = document.getElementById('chevNext');
+
+  // build dots
+  slides.forEach((s, k) => {
+    const d = document.createElement('button');
+    d.title = s.dataset.label || ('Слайд ' + (k+1));
+    d.addEventListener('click', () => show(k));
+    dotsWrap.appendChild(d);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  // Fit a slide's content to the screen: scale down on wide displays so a slide
+  // never needs scrolling when projecting; fall back to scrolling on phones.
+  function fit(s) {
+    const inner = s.querySelector('.inner');
+    inner.style.transform = '';
+    const scrollMode = () => {                 // content starts below the fixed header and scrolls
+      s.style.overflowY = 'auto';
+      s.style.alignItems = 'flex-start';
+      s.scrollTop = 0;
+    };
+    if (window.innerWidth <= 820) { scrollMode(); return; }   // narrow / portrait
+    s.style.overflowY = 'hidden';
+    s.style.alignItems = 'center';
+    const cs = getComputedStyle(s);
+    const avail = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const need = inner.offsetHeight;
+    if (need > avail) {
+      const k = avail / need;
+      if (k < 0.55) { scrollMode(); return; }  // too small to stay readable — scroll instead of overflowing under the header
+      inner.style.transform = 'scale(' + k + ')';
+    }
+  }
+
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    counter.textContent = (i + 1) + ' / ' + total;
+    progress.style.width = ((i + 1) / total * 100) + '%';
+    const atStart = i === 0, atEnd = i === total - 1;
+    btnPrev.disabled = chevPrev.disabled = atStart;
+    btnNext.disabled = chevNext.disabled = atEnd;
+    fit(slides[i]);
+    if (location.hash !== '#' + i) history.replaceState(null, '', '#' + i);
+  }
+  let resizeT;
+  window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => fit(slides[i]), 120); });
+  const next = () => show(i + 1);
+  const prev = () => show(i - 1);
+
+  btnNext.addEventListener('click', next);
+  btnPrev.addEventListener('click', prev);
+  chevNext.addEventListener('click', next);
+  chevPrev.addEventListener('click', prev);
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(total - 1); }
+  });
+
+  // start at hash if present
+  const start = parseInt((location.hash || '').replace('#', ''), 10);
+  show(Number.isInteger(start) ? start : 0);
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>

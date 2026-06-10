@@ -31,6 +31,8 @@
       ["ai-inventory.html", "🧾 AI-BOM — инвентар на ИИ"],
       ["nhi-register.html", "🪪 Регистър на NHI"],
       ["ai-training.html", "🎭 Обучение: deepfakes и AI"],
+      ["identity-ai.html", "🎤 Идентичността в ерата на AI (презентация)"],
+      ["ai-security-trends.html", "🛰 AI сигурност: тенденции и управление"],
       ["document.html?doc=ai-use-policy", "📄 Политика за ползване на AI"]
     ]}
   ];

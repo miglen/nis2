@@ -441,18 +441,22 @@
   function fit(s) {
     const inner = s.querySelector('.inner');
     inner.style.transform = '';
-    if (window.innerWidth <= 820) {            // narrow / portrait → comfortable scroll
+    const scrollMode = () => {                 // content starts below the fixed header and scrolls
       s.style.overflowY = 'auto';
       s.style.alignItems = 'flex-start';
       s.scrollTop = 0;
-      return;
-    }
+    };
+    if (window.innerWidth <= 820) { scrollMode(); return; }   // narrow / portrait
     s.style.overflowY = 'hidden';
     s.style.alignItems = 'center';
     const cs = getComputedStyle(s);
     const avail = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     const need = inner.offsetHeight;
-    if (need > avail) inner.style.transform = 'scale(' + Math.max(0.55, avail / need) + ')';
+    if (need > avail) {
+      const k = avail / need;
+      if (k < 0.55) { scrollMode(); return; }  // too small to stay readable — scroll instead of overflowing under the header
+      inner.style.transform = 'scale(' + k + ')';
+    }
   }
 
   function show(n) {

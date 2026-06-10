@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI сигурност — тенденции, модели и управление (обучение)</title>
+<link rel="stylesheet" href="nis2.css" />
+<style>
+  :root {
+    --blue: #15508a;
+    --blue-strong: #0d3a66;
+    --blue-soft: #eaf1f9;
+    --blue-line: #cfdef0;
+    --ink: #1b2733;
+    --ink-soft: #5b6b7b;
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --line: #e3eaf2;
+    --add: #1a7f4b;
+    --add-soft: #e9f7ef;
+    --add-line: #b6e6c6;
+    --gold: #c98a00;
+    --gold-soft: #fbf3df;
+    --red: #b3261e;
+    --red-soft: #fdeeed;
+    --radius: 14px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: "Georgia", "Times New Roman", serif;
+    --shadow: 0 2px 12px rgba(20,50,90,.08);
+    --shadow-lg: 0 10px 34px rgba(20,50,90,.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+  /* top progress */
+  .progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--blue); width: 0; z-index: 130; transition: width .35s ease; }
+
+  /* slides */
+  .slide { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity .4s ease, transform .4s ease; padding: 84px 6vw 96px; }
+  .slide.active { opacity: 1; visibility: visible; transform: none; }
+  .inner { display: flex; flex-direction: column; width: 100%; max-width: 1080px; transform-origin: center center; }
+
+  .kicker { font-size: clamp(11px, 1.1vw, 13px); letter-spacing: .16em; text-transform: uppercase; color: var(--blue); font-weight: 700; }
+
+  /* slide header */
+  .shead { display: flex; align-items: center; gap: 22px; margin-bottom: 18px; }
+  .mnum { flex: none; width: clamp(64px, 7vw, 88px); height: clamp(64px, 7vw, 88px); border-radius: 20px; background: linear-gradient(135deg, var(--blue), var(--blue-strong)); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 3.4vw, 40px); box-shadow: var(--shadow); }
+  .shead h2 { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(26px, 3.6vw, 42px); line-height: 1.1; margin: 4px 0 0; overflow-wrap: break-word; }
+  .lead { font-size: clamp(15px, 1.6vw, 20px); color: var(--ink-soft); margin: 0 0 24px; max-width: 70ch; }
+
+  /* talking points */
+  .points { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 26px; }
+  .points.three { grid-template-columns: 1fr 1fr 1fr; }
+  .pt { display: flex; gap: 14px; background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; border-left: 4px solid var(--blue); }
+  .pt strong { display: block; color: var(--blue-strong); font-size: clamp(15px, 1.5vw, 18px); margin-bottom: 3px; }
+  .pt span { color: var(--ink-soft); font-size: clamp(13.5px, 1.35vw, 16px); line-height: 1.5; }
+  .pt .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); margin-top: 8px; }
+  .pt.green { border-left-color: var(--add); } .pt.green .dot { background: var(--add); }
+  .pt.red { border-left-color: var(--red); } .pt.red .dot { background: var(--red); }
+  .pt.gold { border-left-color: var(--gold); } .pt.gold .dot { background: var(--gold); }
+
+  .takeaway { margin-top: 24px; background: var(--gold-soft); border-left: 4px solid var(--gold); border-radius: 10px; padding: 14px 20px; font-size: clamp(14px, 1.5vw, 18px); }
+  .takeaway b { color: var(--gold); }
+  .takeaway.alert { background: var(--red-soft); border-left-color: var(--red); }
+  .takeaway.alert b { color: var(--red); }
+
+  /* big number stats */
+  .bignums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .bignums.two { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; width: 100%; }
+  .bn { background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; text-align: center; border-top: 4px solid var(--blue); }
+  .bn .num { font-family: var(--serif); font-weight: 700; font-size: clamp(34px, 4.4vw, 54px); color: var(--blue-strong); line-height: 1.05; }
+  .bn strong { display: block; margin-top: 8px; color: var(--blue-strong); font-size: clamp(14px, 1.5vw, 18px); }
+  .bn span { display: block; margin-top: 6px; color: var(--ink-soft); font-size: clamp(12.5px, 1.25vw, 15px); line-height: 1.5; }
+  .bn.red { border-top-color: var(--red); } .bn.red .num { color: var(--red); }
+  .bn.gold { border-top-color: var(--gold); } .bn.gold .num { color: var(--gold); }
+  .bn.green { border-top-color: var(--add); } .bn.green .num { color: var(--add); }
+
+  /* risk pyramid (EU AI Act) */
+  .tiers { display: flex; flex-direction: column; gap: 10px; }
+  .tier { display: grid; grid-template-columns: 220px 1fr; gap: 12px; align-items: stretch; }
+  .tier .tname { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; border-radius: 10px; font-weight: 700; color: #fff; font-size: clamp(13px, 1.4vw, 16px); text-align: center; }
+  .tier .tdesc { background: var(--panel); border-radius: 10px; box-shadow: var(--shadow); padding: 11px 15px; font-size: clamp(13px, 1.3vw, 15.5px); color: var(--ink-soft); line-height: 1.45; }
+  .tier .tdesc b { color: var(--blue-strong); }
+  .tier.t1 .tname { background: var(--red); }
+  .tier.t2 .tname { background: #d97706; }
+  .tier.t3 .tname { background: var(--gold); }
+  .tier.t4 .tname { background: var(--add); }
+  @media (max-width: 700px) { .tier { grid-template-columns: 1fr; } }
+
+  /* numbered list */
+  .numlist { display: flex; flex-direction: column; gap: 10px; }
+  .numlist .nl { display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 12px 16px; }
+  .numlist .nl .n { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; }
+  .numlist .nl strong { color: var(--blue-strong); font-size: clamp(14px, 1.45vw, 17px); }
+  .numlist .nl span { display: block; color: var(--ink-soft); font-size: clamp(13px, 1.3vw, 15.5px); line-height: 1.45; }
+
+  /* horizontal flow */
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .fstep { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 14px; text-align: center; border-top: 4px solid var(--blue); position: relative; }
+  .fstep .fn { font-family: var(--serif); font-weight: 700; color: var(--blue); font-size: clamp(18px, 2vw, 24px); }
+  .fstep strong { display: block; color: var(--blue-strong); margin-top: 4px; font-size: clamp(14px, 1.4vw, 17px); }
+  .fstep span { display: block; color: var(--ink-soft); margin-top: 6px; font-size: clamp(12px, 1.15vw, 14px); line-height: 1.45; }
+  @media (max-width: 860px) { .flow { grid-template-columns: 1fr; } }
+
+  /* cover slide */
+  .cover .inner { text-align: center; align-items: center; }
+  .cover .badge { display: inline-block; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); background: var(--blue-soft); border: 1px solid var(--blue-line); padding: 7px 18px; border-radius: 999px; margin-bottom: 26px; }
+  .cover h1 { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(32px, 5vw, 60px); line-height: 1.08; margin: 0 0 16px; }
+  .cover .csub { font-size: clamp(16px, 1.9vw, 23px); color: var(--ink-soft); margin: 0 0 36px; max-width: 60ch; }
+  .agenda { display: grid; gap: 12px; width: 100%; max-width: 760px; text-align: left; }
+  .agenda .ai { display: flex; align-items: center; gap: 16px; background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 20px; font-size: clamp(15px, 1.7vw, 19px); font-weight: 600; color: var(--ink); }
+  .agenda .ai .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--blue-soft); color: var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; }
+  .cover .hint { margin-top: 32px; font-size: 13px; color: var(--ink-soft); }
+  .cover .hint kbd { background: #fff; border: 1px solid var(--blue-line); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px; font-family: var(--sans); font-size: 12px; color: var(--blue-strong); }
+
+  /* closing slide */
+  .closing .inner { text-align: center; align-items: center; }
+  .closing .big { font-family: var(--serif); color: var(--blue-strong); font-size: clamp(30px, 4.6vw, 54px); line-height: 1.12; margin: 0 0 18px; max-width: 22ch; }
+  .closing .sub { font-size: clamp(16px, 1.9vw, 22px); color: var(--ink-soft); max-width: 60ch; margin: 0 0 14px; }
+  .closing .punch { display: inline-block; background: var(--gold-soft); border: 1px solid var(--gold); color: var(--gold); font-weight: 700; padding: 10px 22px; border-radius: 999px; font-size: clamp(15px, 1.7vw, 20px); margin: 8px 0 34px; }
+  .closing .cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .closing .cta a { text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 999px; }
+  .closing .cta a.primary { background: var(--blue); color: #fff; box-shadow: var(--shadow-lg); }
+  .closing .cta a.primary:hover { background: var(--blue-strong); }
+  .closing .cta a.ghost { color: var(--blue); border: 1px solid var(--blue-line); background: #fff; }
+  .closing .cta a.ghost:hover { background: var(--blue-soft); }
+
+  /* nav chevrons */
+  .chev { position: fixed; top: 50%; transform: translateY(-50%); z-index: 55; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--blue-line); background: rgba(255,255,255,.85); backdrop-filter: blur(6px); color: var(--blue); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); }
+  .chev:hover { background: #fff; color: var(--blue-strong); }
+  .chev.prev { left: 18px; } .chev.next { right: 18px; }
+  .chev:disabled { opacity: .3; cursor: default; }
+
+  /* bottom control bar */
+  .controls { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 58; display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; box-shadow: var(--shadow); }
+  .controls .counter { font-size: 13px; font-weight: 700; color: var(--blue-strong); min-width: 60px; text-align: center; }
+  .dots { display: flex; gap: 5px; }
+  .dots button { width: 8px; height: 8px; border-radius: 50%; border: 0; background: var(--blue-line); cursor: pointer; padding: 0; }
+  .dots button.on { background: var(--blue); transform: scale(1.25); }
+  .controls .arrow { border: 0; background: none; color: var(--blue); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+  .controls .arrow:disabled { opacity: .3; cursor: default; }
+
+  @media (max-width: 980px) { .points, .points.three { grid-template-columns: 1fr; } .bignums { grid-template-columns: 1fr; } .bignums.two { grid-template-columns: 1fr; } }
+  @media (max-width: 820px) {
+    .chev { display: none; }
+    .slide { padding: 76px 18px 100px; }
+    .dots { display: none; }
+  }
+  @media (max-width: 600px) {
+    .shead { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .mnum { width: 56px; height: 56px; border-radius: 14px; }
+    .shead h2 { font-size: 25px; }
+    .lead { font-size: 15px; }
+    .pt { padding: 14px 15px; }
+    .takeaway { font-size: 14.5px; }
+  }
+</style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="sitebar" style="position:fixed;left:0;right:0;top:0;">
+    <a class="logo" href="index.html"><span class="m">⚖</span><span class="t">Закон за киберсигурност</span></a>
+    <nav class="sitenav"></nav>
+  </header>
+
+  <!-- 1 · COVER -->
+  <section class="slide cover active" data-label="Заглавие">
+    <div class="inner">
+      <span class="badge">Вътрешно обучение · AI сигурност и управление</span>
+      <h1>Сигурност на AI:<br>тенденции, модели, управление</h1>
+      <p class="csub">Какво ново в AI пейзажа, какви модели навлизат в организациите, как да ги откриваме, класифицираме и управляваме</p>
+      <div class="agenda">
+        <div class="ai"><span class="n">1</span> Най-новите тенденции в AI сигурността</div>
+        <div class="ai"><span class="n">2</span> Видове модели и какво означават за сигурността</div>
+        <div class="ai"><span class="n">3</span> Заплахи срещу AI системите</div>
+        <div class="ai"><span class="n">4</span> Управление: рамки, политика, класификация на риска</div>
+        <div class="ai"><span class="n">5</span> Идентифициране и инвентаризация на AI</div>
+        <div class="ai"><span class="n">6</span> Управление на жизнения цикъл и технически контроли</div>
+      </div>
+      <div class="hint">Навигация: <kbd>←</kbd> <kbd>→</kbd> или стрелките по екрана</div>
+    </div>
+  </section>
+
+  <!-- 2 · WHY NOW -->
+  <section class="slide" data-label="Защо сега">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">01</div>
+        <div>
+          <div class="kicker">Контекст</div>
+          <h2>Защо това обучение — и защо сега</h2>
+        </div>
+      </div>
+      <p class="lead">AI вече не е пилотен проект — той е в браузъра, в кода, в бизнес процесите и в ръцете на нападателите. Скоростта на навлизане изпреварва скоростта на управление.</p>
+      <div class="bignums">
+        <div class="bn red"><div class="num">890%</div><strong>Ръст на GenAI трафика</strong><span>Годишен ръст на корпоративния GenAI трафик — служителите вече работят с AI, със или без разрешение.</span></div>
+        <div class="bn red"><div class="num">427%</div><strong>Повече AI атаки</strong><span>Годишен ръст на AI-задвижваните кибератаки — нападателите възприеха технологията по-бързо от защитниците.</span></div>
+        <div class="bn gold"><div class="num">97%</div><strong>Без базови контроли</strong><span>От организациите с AI-свързани пробиви са нямали елементарни контроли на достъпа върху AI системите си.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Въпросът не е „дали“ организацията използва AI, а дали го управлява.</div>
+    </div>
+  </section>
+
+  <!-- 3 · MODEL TYPES -->
+  <section class="slide" data-label="Видове модели">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">02</div>
+        <div>
+          <div class="kicker">Основи</div>
+          <h2>Видове модели — речник за защитника</h2>
+        </div>
+      </div>
+      <p class="lead">Не можете да управлявате това, което не разбирате. Различните видове модели носят различни рискови профили.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Големи езикови модели (LLM)</strong><span>Генерират текст и код по подадена заявка (prompt). Рискове: изтичане на данни през заявките, халюцинации, prompt injection.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Мултимодални модели</strong><span>Работят с текст, изображения, аудио и видео. Рискове: deepfakes, скрити инструкции в изображения, гласово клониране.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Разсъждаващи (reasoning) модели</strong><span>Решават многостъпкови задачи и планират действия — основата на автономните агенти. Рискът расте с автономността.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Малки/локални модели (SLM)</strong><span>Работят на устройството или в собствена инфраструктура. По-добър контрол върху данните, но управлението и кръпките са ваша отговорност.</span></div></div>
+        <div class="pt gold"><span class="dot"></span><div><strong>Отворени срещу затворени тегла</strong><span>Open-weight моделите (изтегляте файла с модела) позволяват пълен контрол, но идват без гаранции — и могат да са компрометирани при изтегляне.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>AI агенти</strong><span>Модел + инструменти + права за действие. Вече не „отговарят“, а действат: четат пощата, викат API, променят системи. Това са идентичности.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · TREND: AGENTIC AI -->
+  <section class="slide" data-label="Агентен AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">03</div>
+        <div>
+          <div class="kicker">Тенденция № 1</div>
+          <h2>Агентният AI — от чатбот към действащ актьор</h2>
+        </div>
+      </div>
+      <p class="lead">Най-голямата промяна от последната година: моделите вече не само отговарят, а изпълняват задачи автономно — с достъп до инструменти, системи и данни през протоколи като MCP.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Достъп до инструменти</strong><span>Агентите викат API, изпълняват код, четат и пишат файлове, изпращат съобщения — с правата, които някой им е дал (или е забравил да ограничи).</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Машинна скорост, машинен мащаб</strong><span>Една грешна инструкция се изпълнява за секунди в стотици системи. Времето за реакция на човек не е достатъчно.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Изложени MCP сървъри</strong><span>8 000+ MCP сървъра са публично достъпни; 36,7% са уязвими на SSRF — мост за латерално движение в облачни среди.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Кризата OpenClaw</strong><span>40 000+ изложени инстанции на AI агенти с идентификационни данни в чист текст и 1 184 зловредни „умения“ в един маркетплейс.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Агентът е нечовешка идентичност (NHI) — регистрирайте го, дайте му собственик и най-малки права.</div>
+    </div>
+  </section>
+
+  <!-- 5 · TREND: SHADOW AI -->
+  <section class="slide" data-label="Shadow AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">04</div>
+        <div>
+          <div class="kicker">Тенденция № 2</div>
+          <h2>Shadow AI — неуправляваната употреба</h2>
+        </div>
+      </div>
+      <p class="lead">Служителите не чакат одобрение. Shadow AI се проявява в три наблюдаеми поведения — обикновено без зъл умисъл, но със сериозни последствия.</p>
+      <div class="points three">
+        <div class="pt"><span class="dot"></span><div><strong>Данни в публични модели</strong><span>Фирмени документи, лични данни и стратегия се поставят в публични чатботове — без одитна следа и без механизъм за изтегляне.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Неодобрени инструменти</strong><span>Екипите купуват AI услуги без преглед за сигурност, оценка на доставчика или IAM интеграция.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>LLM API директно в кода</strong><span>Разработчици вграждат външни модели в продукционни приложения без контроли, лимити и управление.</span></div></div>
+      </div>
+      <div class="takeaway alert"><b>Внимание:</b> Пълната забрана не работи — тя само прави употребата невидима. Управлявайте я: одобрени инструменти + ясни правила + наблюдение.</div>
+    </div>
+  </section>
+
+  <!-- 6 · TREND: AI-POWERED ATTACKS -->
+  <section class="slide" data-label="AI атаки">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">05</div>
+        <div>
+          <div class="kicker">Тенденция № 3</div>
+          <h2>AI в ръцете на нападателя</h2>
+        </div>
+      </div>
+      <p class="lead">Същите способности, които ускоряват бизнеса, ускоряват и атаките — по-евтини, по-убедителни, по-мащабни.</p>
+      <div class="points">
+        <div class="pt red"><span class="dot"></span><div><strong>Deepfake измами</strong><span>Гласово и видео клониране на ръководители — „нареждания“ за плащания и достъп, неразличими на пръв поглед от истинските.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>AI фишинг</strong><span>Перфектен език, личен контекст от социални мрежи, мащаб на хиляди уникални писма — старите признаци („лош правопис“) вече не работят.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Автоматизирано разузнаване и експлоатация</strong><span>AI ускорява откриването на уязвимости и писането на експлойти — прозорецът между публикуване на уязвимост и атака се свива.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Защитата също използва AI</strong><span>Поведенчески анализ (UBA), корелация на сигнали и приоритизиране на заплахи — AI намалява умората от аларми и ускорява реакцията.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Верификация по втори канал за всяко необичайно искане — гласът и видеото вече не са доказателство.</div>
+    </div>
+  </section>
+
+  <!-- 7 · THREATS TO MODELS (OWASP) -->
+  <section class="slide" data-label="Заплахи за модела">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">06</div>
+        <div>
+          <div class="kicker">Заплахи · OWASP LLM Top 10</div>
+          <h2>Как атакуват самите модели</h2>
+        </div>
+      </div>
+      <p class="lead">AI системите имат собствени, нови класове уязвимости — които класическите контроли не покриват. Най-важните за регистъра на риска:</p>
+      <div class="points">
+        <div class="pt red"><span class="dot"></span><div><strong>Prompt injection</strong><span>Зловредни инструкции, скрити в съдържание (имейл, документ, уеб страница), които моделът изпълнява. Верижно със SQL инжекция → пълно компрометиране на агента.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Отравяне на данни (data poisoning)</strong><span>Манипулирани обучителни или RAG данни променят поведението на модела незабелязано.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Jailbreak и заобикаляне на защити</strong><span>Техники за изключване на вградените ограничения — моделът прави това, което политиката забранява.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Изтичане на чувствителна информация</strong><span>Моделът разкрива данни от обучението, системния prompt или контекста на други потребители.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Халюцинации</strong><span>Уверено поднесени неверни отговори — рискът е операционен: грешни решения, грешен код, грешни съвети към клиенти.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Прекомерна автономност (excessive agency)</strong><span>Агент с повече права и инструменти, отколкото задачата изисква — всяка от горните слабости се умножава по обхвата на достъпа му.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · AI SUPPLY CHAIN -->
+  <section class="slide" data-label="Верига на доставки">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">07</div>
+        <div>
+          <div class="kicker">Заплахи</div>
+          <h2>Веригата на доставки на AI</h2>
+        </div>
+      </div>
+      <p class="lead">Моделът, който използвате, рядко е „ваш“. Той идва от доставчик, маркетплейс или open-source хранилище — и носи рисковете на целия си път дотук.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Предобучени модели от хранилища</strong><span>Изтеглени модели могат да съдържат зловреден код или задни врати — проверявайте източника, подписите и хешовете.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Външни API и под-доставчици</strong><span>Вашият AI доставчик ползва свои доставчици. Къде отиват данните ви? Кой ги съхранява, обучава ли се върху тях?</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Разширения, плъгини и „умения“</strong><span>Маркетплейсите за агентни умения са новият вектор — спомнете си 1 184-те зловредни умения от кризата OpenClaw.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Отговорът: AI-BOM</strong><span>Инвентар на всички AI компоненти (модели, API, набори данни, плъгини) с произход, версия и собственик — както SBOM, но за AI.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Третирайте AI доставчиците като всеки критичен доставчик по NIS 2 — оценка, договор, наблюдение.</div>
+    </div>
+  </section>
+
+  <!-- 9 · GOVERNANCE FRAMEWORKS -->
+  <section class="slide" data-label="Рамки за управление">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">08</div>
+        <div>
+          <div class="kicker">Управление</div>
+          <h2>Рамките: какво да следваме</h2>
+        </div>
+      </div>
+      <p class="lead">Не започвайте от нулата — рамките вече съществуват и се допълват. Целта е една обща система за управление, не четири паралелни програми.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>EU AI Act</strong><span>Регламентът за ИИ: класификация по риск, задължения за внедрители на високорискови системи (вече в сила), прозрачност, човешки надзор. Глоби до 6% от глобалния оборот.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>NIS 2 / ЗКС</strong><span>Технологично неутрален — AI системите са „мрежови и информационни системи“: анализ на риска, инциденти, верига на доставки, обучение.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>ISO/IEC 42001</strong><span>Система за управление на ИИ (AIMS) — сертифицируем стандарт, който се интегрира естествено със СУИС по ISO 27001.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>NIST AI RMF</strong><span>Практическа рамка за управление на AI риска: Govern → Map → Measure → Manage. Добър работен модел, дори да не сте в САЩ.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Обединете ги под общата СУИС — едни контроли, картографирани към няколко рамки.</div>
+    </div>
+  </section>
+
+  <!-- 10 · RISK CLASSIFICATION -->
+  <section class="slide" data-label="Класификация на риска">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">09</div>
+        <div>
+          <div class="kicker">Управление · EU AI Act</div>
+          <h2>Класификация на риска по EU AI Act</h2>
+        </div>
+      </div>
+      <p class="lead">Регламентът подрежда AI системите в четири нива на риск — задълженията ви зависят от това къде попада всяка ваша система.</p>
+      <div class="tiers">
+        <div class="tier t1">
+          <div class="tname">Неприемлив риск</div>
+          <div class="tdesc"><b>Забранени практики:</b> социално оценяване, манипулативни техники, разпознаване на емоции на работното място, нецелево извличане на лицеви изображения.</div>
+        </div>
+        <div class="tier t2">
+          <div class="tname">Висок риск</div>
+          <div class="tdesc"><b>Строги задължения:</b> системи в наемане на персонал, кредитиране, критична инфраструктура, правоприлагане — изискват оценка на съответствието, човешки надзор, журнали, документация.</div>
+        </div>
+        <div class="tier t3">
+          <div class="tname">Ограничен риск</div>
+          <div class="tdesc"><b>Прозрачност:</b> чатботове и генеративно съдържание — потребителят трябва да знае, че взаимодейства с AI; маркиране на синтетично съдържание (deepfakes).</div>
+        </div>
+        <div class="tier t4">
+          <div class="tname">Минимален риск</div>
+          <div class="tdesc"><b>Без специални задължения:</b> спам филтри, препоръки, игри — добрите практики остават препоръчителни.</div>
+        </div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Класифицирайте всяка система от AI инвентара си по тези нива — това определя контролите и документацията.</div>
+    </div>
+  </section>
+
+  <!-- 11 · AI POLICY -->
+  <section class="slide" data-label="AI политика">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">10</div>
+        <div>
+          <div class="kicker">Управление</div>
+          <h2>Политика за използване на AI</h2>
+        </div>
+      </div>
+      <p class="lead">Един документ, който всеки служител може да разбере и приложи. Без него всяко правило е слух.</p>
+      <div class="points">
+        <div class="pt green"><span class="dot"></span><div><strong>Одобрени инструменти</strong><span>Ясен списък: кои AI услуги са разрешени, за какви данни и задачи — и къде се иска одобрение за нов инструмент.</span></div></div>
+        <div class="pt red"><span class="dot"></span><div><strong>Забранени данни</strong><span>Какво никога не влиза в публичен модел: лични данни, клиентска информация, търговски тайни, изходен код, идентификационни данни.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Роли и отговорности</strong><span>Собственик на политиката, одобряващ нови инструменти, собственик на всеки AI агент и система — без собственик няма управление.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Проверка на резултатите</strong><span>AI изходът се преглежда от човек преди да стигне до клиент, продукция или решение — отговорността остава човешка.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Докладване на инциденти</strong><span>Изтекли данни в чатбот, подозрителен deepfake, компрометиран агент — къде и как се докладва, без страх от наказание.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Образец: <b>Политика за използване на AI</b> в портала (СУИС документи).</div>
+    </div>
+  </section>
+
+  <!-- 12 · HOW TO IDENTIFY AI -->
+  <section class="slide" data-label="Откриване на AI">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">11</div>
+        <div>
+          <div class="kicker">Идентифициране</div>
+          <h2>Как да открием AI в организацията</h2>
+        </div>
+      </div>
+      <p class="lead">Преди да управлявате, трябва да видите. Комбинирайте няколко източника — нито един не е достатъчен сам:</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>Мрежов трафик и DNS</strong><span>Кой достъпва AI домейни (чатботове, API крайни точки)? Прокси/SASE журналите показват реалната употреба, не декларираната.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Финансови следи</strong><span>Абонаменти и разходи по фирмени карти — AI услугите оставят следа в счетоводството, дори да я няма в ИТ регистъра.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>SaaS и OAuth одит</strong><span>Какви приложения са свързани към фирмения акаунт (Google/Microsoft)? AI плъгините искат широки права за достъп до поща и документи.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Кодови хранилища</strong><span>Търсене за AI SDK-та и API ключове в кода — вградените LLM извиквания са най-невидимата употреба.</span></div></div>
+        <div class="pt gold"><span class="dot"></span><div><strong>Анкета без наказание</strong><span>Попитайте екипите какво ползват и защо. Амнистия + бърз процес за одобрение дава по-пълна картина от всяка техническа мярка.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · INVENTORY -->
+  <section class="slide" data-label="Инвентаризация">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">12</div>
+        <div>
+          <div class="kicker">Идентифициране</div>
+          <h2>Инвентаризация: AI-BOM и регистър на NHI</h2>
+        </div>
+      </div>
+      <p class="lead">Откритото се записва в два живи регистъра — те са основата на всички следващи контроли.</p>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>AI-BOM — инвентар на ИИ</strong><span>Всяка AI система/инструмент: предназначение, доставчик, модел, какви данни обработва, ниво на риск по EU AI Act, собственик, статус (одобрен/в преглед/забранен).</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Регистър на NHI</strong><span>Всички нечовешки идентичности: сервизни акаунти, API ключове, AI агенти — със собственик, права, дата на ротация на тайните и срок на преглед.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Собственик за всичко</strong><span>Всеки запис има човек-собственик. „Ничии“ системи и акаунти са първите, които се превръщат в инциденти.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Жив документ, не снимка</strong><span>Преглед на тримесечие: ново открито → добавя се; излязло от употреба → деактивира се и се архивира. Инвентар на хартия от миналата година е фалшиво спокойствие.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Порталът включва готови инструменти: <b>AI-BOM инвентар</b> и <b>Регистър на NHI</b> — започнете от тях.</div>
+    </div>
+  </section>
+
+  <!-- 14 · MODEL LIFECYCLE -->
+  <section class="slide" data-label="Жизнен цикъл">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">13</div>
+        <div>
+          <div class="kicker">Управление на моделите</div>
+          <h2>Жизнен цикъл на модела в организацията</h2>
+        </div>
+      </div>
+      <p class="lead">Всеки модел и AI инструмент минава през един и същ управляван път — от идея до извеждане от употреба.</p>
+      <div class="flow">
+        <div class="fstep"><div class="fn">1</div><strong>Заявка и оценка</strong><span>Бизнес нужда, оценка на доставчика, класификация на данните и риска (EU AI Act ниво).</span></div>
+        <div class="fstep"><div class="fn">2</div><strong>Одобрение</strong><span>Решение от собственика на политиката; запис в AI-BOM; договорни клаузи за данни и под-доставчици.</span></div>
+        <div class="fstep"><div class="fn">3</div><strong>Внедряване</strong><span>Идентичност с най-малки права, журналиране, guardrails, интеграция с IAM/SSO.</span></div>
+        <div class="fstep"><div class="fn">4</div><strong>Наблюдение</strong><span>Поведение, разходи, дрейф на модела, нови уязвимости, преглед на достъпа на агента.</span></div>
+        <div class="fstep"><div class="fn">5</div><strong>Извеждане</strong><span>Деактивиране на акаунти и ключове, изтриване/връщане на данни, архив в регистъра.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Същата дисциплина като при всеки друг актив — разликата е, че при AI стъпки 3 и 4 включват и идентичността на самия модел/агент.</div>
+    </div>
+  </section>
+
+  <!-- 15 · TECHNICAL CONTROLS -->
+  <section class="slide" data-label="Технически контроли">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">14</div>
+        <div>
+          <div class="kicker">Управление на моделите</div>
+          <h2>Технически контроли за AI системи</h2>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt"><span class="dot"></span><div><strong>AI gateway / прокси</strong><span>Единна входна точка към всички модели: централно журналиране, лимити на заявките, маскиране на чувствителни данни, превключване между доставчици.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>DLP за заявките</strong><span>Откриване и блокиране на лични данни, тайни и класифицирана информация преди да напуснат организацията.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Guardrails на входа и изхода</strong><span>Филтри срещу prompt injection и jailbreak на входа; проверка на изхода за изтичане на данни и опасно съдържание.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Най-малки права за агентите</strong><span>Отделна идентичност на всеки агент, кратко живеещи тайни, ограничен набор инструменти, изрично одобрение за деструктивни действия.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Журналиране и одитна следа</strong><span>Кой какво попита, какво отговори моделът, какво направи агентът — без това няма нито разследване, нито съответствие.</span></div></div>
+        <div class="pt gold"><span class="dot"></span><div><strong>Red teaming на AI</strong><span>Редовни тестове срещу собствените системи: prompt injection, jailbreak, извличане на данни — преди нападателите да го направят.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · HUMAN FACTOR -->
+  <section class="slide" data-label="Човешкият фактор">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">15</div>
+        <div>
+          <div class="kicker">Хора</div>
+          <h2>Човешкият фактор — какво да правят всички</h2>
+        </div>
+      </div>
+      <p class="lead">Контролите ловят машинното; хората ловят останалото. Пет навика за всеки служител:</p>
+      <div class="numlist">
+        <div class="nl"><span class="n">1</span><div><strong>Ползвайте одобрените инструменти</strong><span>Нужен ви е нов? Поискайте одобрение — процесът е бърз. Не „по-лесно е първо да пробвам“.</span></div></div>
+        <div class="nl"><span class="n">2</span><div><strong>Никакви чувствителни данни в публични модели</strong><span>Лични данни, клиенти, код, тайни — не. При съмнение: попитайте преди, не след.</span></div></div>
+        <div class="nl"><span class="n">3</span><div><strong>Проверявайте AI резултатите</strong><span>Моделът звучи уверено и когато греши. Вие носите отговорността за това, което изпращате нататък.</span></div></div>
+        <div class="nl"><span class="n">4</span><div><strong>Подозирайте „спешните“ гласове и видеа</strong><span>Необичайно искане от „шефа“ по телефон/видео → проверка по втори, познат канал. Винаги.</span></div></div>
+        <div class="nl"><span class="n">5</span><div><strong>Докладвайте без страх</strong><span>Пуснали сте нещо чувствително в чатбот? Докладвайте веднага — ранният сигнал е ценен, мълчанието е скъпо.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 · ROADMAP -->
+  <section class="slide" data-label="Пътна карта">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum">16</div>
+        <div>
+          <div class="kicker">Практика</div>
+          <h2>Пътна карта: първите 90 дни</h2>
+        </div>
+      </div>
+      <p class="lead">Не чакайте съвършената програма — започнете с видимостта и градете нагоре.</p>
+      <div class="flow">
+        <div class="fstep"><div class="fn">1</div><strong>Открийте</strong><span>Трафик, разходи, OAuth, код, анкета — пълна картина на реалната AI употреба.</span></div>
+        <div class="fstep"><div class="fn">2</div><strong>Класифицирайте</strong><span>AI-BOM + ниво на риск по EU AI Act за всяка система; регистър на NHI за агентите.</span></div>
+        <div class="fstep"><div class="fn">3</div><strong>Управлявайте</strong><span>Политика за AI, собственици, одобрени инструменти, договори с доставчиците.</span></div>
+        <div class="fstep"><div class="fn">4</div><strong>Автоматизирайте</strong><span>AI gateway, DLP, guardrails, най-малки права, журналиране.</span></div>
+        <div class="fstep"><div class="fn">5</div><strong>Наблюдавайте</strong><span>Поведенчески анализ, прегледи на достъпа, red teaming, обучение — непрекъснато.</span></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Същата рамка „Откриване → Наблюдение“ като при идентичностите — AI управлението е продължение на СУИС, не отделна вселена.</div>
+    </div>
+  </section>
+
+  <!-- 18 · KEY TAKEAWAYS -->
+  <section class="slide" data-label="Ключови изводи">
+    <div class="inner">
+      <div class="shead">
+        <div class="mnum" style="font-size:clamp(20px,2.2vw,26px);">★</div>
+        <div>
+          <div class="kicker">Обобщение</div>
+          <h2>Ключови изводи</h2>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt gold"><span class="dot"></span><div><strong>Тенденциите: агенти, Shadow AI, AI атаки</strong><span>Моделите вече действат автономно, употребата е масова и невидима, а нападателите използват същите инструменти.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Моделите са актив с жизнен цикъл</strong><span>Оценка → одобрение → внедряване → наблюдение → извеждане. Всеки модел има собственик и запис в AI-BOM.</span></div></div>
+        <div class="pt"><span class="dot"></span><div><strong>Агентите са идентичности</strong><span>Регистър на NHI, най-малки права, кратко живеещи тайни, журналиране — ако не е в IAM, не е управлявано.</span></div></div>
+        <div class="pt green"><span class="dot"></span><div><strong>Рамките се събират в една система</strong><span>EU AI Act + NIS 2 + ISO 42001 под общата СУИС — едни контроли, няколко съответствия.</span></div></div>
+      </div>
+      <div class="takeaway"><b>Акцент:</b> Не забранявайте AI — направете го видим, дайте му собственици и го управлявайте като всеки критичен актив.</div>
+    </div>
+  </section>
+
+  <!-- 19 · CLOSING -->
+  <section class="slide closing" data-label="Заключение">
+    <div class="inner">
+      <span class="kicker">Заключение</span>
+      <h2 class="big">Видимост. Собственост. Контрол.</h2>
+      <p class="sub">Три думи, които превръщат AI от неуправляван риск в управляван актив — и удовлетворяват NIS 2, EU AI Act и ISO 42001 едновременно.</p>
+      <span class="punch">Ако не е в инвентара и в IAM — не е управлявано.</span>
+      <div class="cta">
+        <a class="primary" href="ai-inventory.html">AI-BOM инвентар →</a>
+        <a class="ghost" href="nhi-register.html">Регистър на NHI</a>
+        <a class="ghost" href="document.html?doc=ai-use-policy">Политика за ползване на AI</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- nav -->
+  <button class="chev prev" id="chevPrev" aria-label="Назад">‹</button>
+  <button class="chev next" id="chevNext" aria-label="Напред">›</button>
+
+  <div class="controls">
+    <button class="arrow" id="btnPrev" aria-label="Назад">◀</button>
+    <span class="counter" id="counter">1 / 19</span>
+    <div class="dots" id="dots"></div>
+    <button class="arrow" id="btnNext" aria-label="Напред">▶</button>
+  </div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let i = 0;
+
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const chevPrev = document.getElementById('chevPrev');
+  const chevNext = document.getElementById('chevNext');
+
+  // build dots
+  slides.forEach((s, k) => {
+    const d = document.createElement('button');
+    d.title = s.dataset.label || ('Слайд ' + (k+1));
+    d.addEventListener('click', () => show(k));
+    dotsWrap.appendChild(d);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  // Fit a slide's content to the screen: scale down on wide displays so a slide
+  // never needs scrolling when projecting; fall back to scrolling on phones.
+  function fit(s) {
+    const inner = s.querySelector('.inner');
+    inner.style.transform = '';
+    const scrollMode = () => {                 // content starts below the fixed header and scrolls
+      s.style.overflowY = 'auto';
+      s.style.alignItems = 'flex-start';
+      s.scrollTop = 0;
+    };
+    if (window.innerWidth <= 820) { scrollMode(); return; }   // narrow / portrait
+    s.style.overflowY = 'hidden';
+    s.style.alignItems = 'center';
+    const cs = getComputedStyle(s);
+    const avail = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const need = inner.offsetHeight;
+    if (need > avail) {
+      const k = avail / need;
+      if (k < 0.55) { scrollMode(); return; }  // too small to stay readable — scroll instead of overflowing under the header
+      inner.style.transform = 'scale(' + k + ')';
+    }
+  }
+
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    counter.textContent = (i + 1) + ' / ' + total;
+    progress.style.width = ((i + 1) / total * 100) + '%';
+    const atStart = i === 0, atEnd = i === total - 1;
+    btnPrev.disabled = chevPrev.disabled = atStart;
+    btnNext.disabled = chevNext.disabled = atEnd;
+    fit(slides[i]);
+    if (location.hash !== '#' + i) history.replaceState(null, '', '#' + i);
+  }
+  let resizeT;
+  window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => fit(slides[i]), 120); });
+  const next = () => show(i + 1);
+  const prev = () => show(i - 1);
+
+  btnNext.addEventListener('click', next);
+  btnPrev.addEventListener('click', prev);
+  chevNext.addEventListener('click', next);
+  chevPrev.addEventListener('click', prev);
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(total - 1); }
+  });
+
+  // start at hash if present
+  const start = parseInt((location.hash || '').replace('#', ''), 10);
+  show(Number.isInteger(start) ? start : 0);
+</script>
+<script src="nis2.js" defer></script>
+</body>
+</html>
